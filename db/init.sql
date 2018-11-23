@@ -1,13 +1,26 @@
-CREATE DATABASE knights;
-use knights;
+CREATE DATABASE quiz;
+use quiz;
 
-CREATE TABLE favorite_colors (
-  name VARCHAR(20),
-  color VARCHAR(10)
+CREATE TABLE question (
+  qid int NOT NULL,
+  title VARCHAR(500),
+  PRIMARY KEY (qid)
 );
 
-INSERT INTO favorite_colors
-  (name, color)
+CREATE TABLE answer (
+  aid int NOT NULL,
+  title VARCHAR(100),
+  question_id int NOT NULL,
+  FOREIGN KEY (question_id) REFERENCES question(qid)
+);
+
+INSERT INTO question
+  (qid, title)
 VALUES
-  ('Lancelot', 'blue'),
-  ('Galahad', 'yellow');
+  (0, 'What is the meaning of life?');
+
+INSERT INTO answer
+  (aid, title, question_id)
+VALUES
+  (0, '42', 0);
+
