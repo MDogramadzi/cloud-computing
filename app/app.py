@@ -3,7 +3,7 @@ from flask import Flask, render_template
 import mysql.connector
 import json
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
 
 def all_questions() -> List[Dict]:
@@ -26,8 +26,8 @@ def all_questions() -> List[Dict]:
 
 @app.route('/')
 def index() -> str:
-    #return render_template('index.html')
-    return json.dumps({'all_questions': all_questions()})
+    return app.send_static_file('index.html')
+    #return json.dumps({'all_questions': all_questions()})
 
 
 if __name__ == '__main__':
