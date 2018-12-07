@@ -20,22 +20,48 @@
   <div id="login">
     <div class="card text-center col-6" style="margin: 0 auto">
         <div class="card-header">
-          Welcome to the Qloud
+          <h3>Welcome to the Qloud</h3>
         </div>
         <div class="card-body">
-          <h2>Login HERE</h2>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">@</span>
+              </div>
+              <input id="login_user_input" type="text" class="form-control" placeholder="Login with Username" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+            <button id="submit_user_button" type="button" class="btn btn-outline-success" hidden>Submit</button>
+            <hr>
+            <h3>OR</h3>
+            <br>
+            <button id="login_type_button" type="button" onclick="create_user_selected()" class="btn btn-outline-primary">Create Account</button>
         </div>
     </div>
   </div>
 
 
   <script>
-    var app = new Vue({
-      el: '#app',
-      data: {
-        message: 'Login Page!'
+    
+    function create_user_selected()  {
+
+      if (document.getElementById("login_type_button").innerText == "Create Account")  {
+        document.getElementById("login_type_button").innerText = "Login with Username";
+
+        var form = document.getElementById("login_user_input");
+        form.placeholder = "Insert new username";
+
+        var submitBut = document.getElementById("submit_user_button");
+        submitBut.hidden = false;
       }
-    });
+      else  {
+        document.getElementById("login_type_button").innerText = "Create Account";
+
+        document.getElementById("login_user_input").placeholder = "Login with Username";
+
+        document.getElementById("submit_user_button").hidden = true;
+      }
+
+    }
+
   </script>
 
 </body>
