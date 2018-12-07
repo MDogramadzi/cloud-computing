@@ -76,6 +76,7 @@
         document.getElementById("submit_button").onclick = join_game;
 
         document.getElementById("user_created_alert").hidden = true;
+        document.getElementById("user_exists_alert").hidden = true;
       }
 
     }
@@ -84,7 +85,7 @@
     function join_game()  {
 
       console.log("JOIN GAME");
-      //username
+      
 
     }
 
@@ -98,9 +99,11 @@
         success: function(response){
           if (response == "User Already Exists")  {
             document.getElementById("user_exists_alert").hidden = false;
+            document.getElementById("user_created_alert").hidden = true;
           }
           else if (response == "User Created Successfully")  {
             document.getElementById("user_created_alert").hidden = false;
+            document.getElementById("user_exists_alert").hidden = true;
           }
           else  {
             console.log("GENERAL ERROR")
