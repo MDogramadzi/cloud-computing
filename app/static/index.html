@@ -29,7 +29,7 @@
               </div>
               <input id="login_user_input" type="text" class="form-control" placeholder="Login with Username" aria-label="Username" aria-describedby="basic-addon1">
             </div>
-            <button id="submit_user_button" type="button" class="btn btn-outline-success" hidden>Submit</button>
+            <button id="submit_user_button" type="button" class="btn btn-outline-success">Log In</button>
             <hr>
             <h3>OR</h3>
             <br>
@@ -49,15 +49,14 @@
         var form = document.getElementById("login_user_input");
         form.placeholder = "Insert new username";
 
-        var submitBut = document.getElementById("submit_user_button");
-        submitBut.hidden = false;
+        document.getElementById("submit_user_button").innerText = "Create User";
       }
       else  {
         document.getElementById("login_type_button").innerText = "Create Account";
 
         document.getElementById("login_user_input").placeholder = "Login with Username";
 
-        document.getElementById("submit_user_button").hidden = true;
+        document.getElementById("submit_user_button").innerText = "Log In";
       }
 
     }

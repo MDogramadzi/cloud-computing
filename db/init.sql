@@ -1,6 +1,12 @@
 CREATE DATABASE quiz;
 use quiz;
 
+CREATE TABLE user (
+  uid int NOT NULL.
+  username VARCHAR(200),
+  PRIMARY KEY (uid)
+);
+
 CREATE TABLE question (
   qid int NOT NULL,
   title VARCHAR(500),
@@ -23,4 +29,5 @@ INSERT INTO answer
   (aid, title, question_id)
 VALUES
   (0, '42', 0);
+  (1, '22', 0);
 
