@@ -1,11 +1,16 @@
 from typing import List, Dict
 from flask import Flask, render_template, request
+<<<<<<< HEAD
 from flask.ext.mysql import MySQL 
+=======
+import mysql.connector
+>>>>>>> 4443eb0c81d88fd25681c3449a841fe74e0dad89
 import json
 
 app = Flask(__name__, static_url_path='/static')
 app.debug = True
 
+<<<<<<< HEAD
     # config = {
     #     'user': 'root',
     #     'password': 'root',
