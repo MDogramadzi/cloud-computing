@@ -4,7 +4,7 @@ import mysql.connector
 import json
 
 app = Flask(__name__, static_url_path='/static')
-
+app.debug = True
 
 def all_questions() -> List[Dict]:
     config = {
