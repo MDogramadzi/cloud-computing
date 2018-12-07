@@ -6,11 +6,13 @@
 
   <title>Qloud App</title>
 
+  <link rel="icon" href="/img/favicon-cloud.ico">
+
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 </head>
@@ -23,17 +25,20 @@
           <h3>Welcome to the Qloud</h3>
         </div>
         <div class="card-body">
+            <i class="fa fa-cloud fa-3x"></i>
+            <br>
+            <br>
             <div class="input-group mb-3">
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">@</span>
               </div>
-              <input id="login_user_input" type="text" class="form-control" placeholder="Login with Username" aria-label="Username" aria-describedby="basic-addon1">
+              <input id="login_user_input" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
             </div>
-            <button id="submit_user_button" type="button" class="btn btn-outline-success">Log In</button>
+            <button id="submit_button" type="button" class="btn btn-success">Join Game</button>
             <hr>
             <h3>OR</h3>
             <br>
-            <button id="login_type_button" type="button" onclick="create_user_selected()" class="btn btn-outline-primary">Create Account</button>
+            <button id="login_type_button" type="button" onclick="login_type_selected()" class="btn btn-outline-primary">Create Account</button>
         </div>
     </div>
   </div>
@@ -41,23 +46,39 @@
 
   <script>
     
-    function create_user_selected()  {
+    function login_type_selected()  {
 
       if (document.getElementById("login_type_button").innerText == "Create Account")  {
         document.getElementById("login_type_button").innerText = "Login with Username";
 
         var form = document.getElementById("login_user_input");
-        form.placeholder = "Insert new username";
+        form.placeholder = "New username";
 
-        document.getElementById("submit_user_button").innerText = "Create User";
+        document.getElementById("submit_button").innerText = "Create User";
+        document.getElementById("submit_button").onclick = validate_and_create_user;
       }
       else  {
         document.getElementById("login_type_button").innerText = "Create Account";
 
-        document.getElementById("login_user_input").placeholder = "Login with Username";
+        document.getElementById("login_user_input").placeholder = "Username";
 
-        document.getElementById("submit_user_button").innerText = "Log In";
+        document.getElementById("submit_button").innerText = "Join Game";
+        document.getElementById("submit_button").onclick = join_game;
       }
+
+    }
+
+    
+    function join_game()  {
+
+      console.log("JOIN GAME");
+
+    }
+
+
+    function validate_and_create_user()  {
+
+      console.log("VALIDATE USER");
 
     }
 
