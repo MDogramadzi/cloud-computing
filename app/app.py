@@ -1,5 +1,5 @@
 from typing import List, Dict
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import mysql.connector
 import json
 
@@ -24,8 +24,13 @@ def all_questions() -> List[Dict]:
     return results
 
 
-@app.route('/')
+@app.route('/', methods=["GET", "POST"])
 def index() -> str:
+    if request.method == "POST":
+        print("###")
+        print(request.form['new_username'])
+        print("###")    
+        return "User Created Successfully"
     return app.send_static_file('index.html')
     #return json.dumps({'all_questions': all_questions()})
 
