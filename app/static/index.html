@@ -40,7 +40,7 @@
             <button id="submit_button" type="button" class="btn btn-success">Join Game</button>
             <br><br>
             <div id="user_created_alert" class="alert alert-success" role="alert" hidden>
-                User created successfully - you can log in now!
+                User created successfully - you can join a game now!
             </div>
             <div id="user_exists_alert" class="alert alert-danger" role="alert" hidden>
                 This username has already been taken - try another!
@@ -55,6 +55,11 @@
 
 
   <script>
+
+    $("#login_user_input").keyup( function() {
+      document.getElementById("user_created_alert").hidden = true;
+      document.getElementById("user_exists_alert").hidden = true;
+    });
     
     function login_type_selected()  {
 
@@ -75,6 +80,7 @@
         document.getElementById("submit_button").innerText = "Join Game";
         document.getElementById("submit_button").onclick = join_game;
 
+        // hide both alerts
         document.getElementById("user_created_alert").hidden = true;
         document.getElementById("user_exists_alert").hidden = true;
       }
