@@ -1,28 +1,40 @@
 from typing import List, Dict
 from flask import Flask, render_template, request
-import pymysql
+import mysql.connector
 import json
-
+import sys
 
 app = Flask(__name__, static_url_path='/static')
 app.debug = True
-
-db = pymysql.connect("db", "root", "root", "quiz")
-cursor = db.cursor()
 
 
 @app.route('/' , methods = ['GET','POST'])
 def index() -> str:
     if request.method == "POST":
         if 'new_username' in request.form:
+
+            print("Checking User")
+
+            config = {
+                'user': 'root',
+                'password': 'root',
+                'host': 'db',
+                'port': '3306',
+                'database': 'quiz'
+            }
+
+            connection = mysql.connector.connect(**config)
+            cursor = connection.cursor()
+
             print("###")
             cursor.execute("SELECT * FROM user")
             print(cursor.fetchall())
+            cursor.close()
+            connection.close()
             print("###")
-            #cursor.execute("SELECT * from user")
-            #data = cursor.fetchone()
-            #print(data)
-            return "HELLO"
+            sys.stdout.flush()
+
+            return "User Created Successfully"
         else:
             # Start looking for a session for the user, username
             print("JOINING GAME")
