@@ -95,7 +95,7 @@
       console.log("VALIDATE USER");
       $.ajax({
         type: 'post',
-        data: {new_username: "Marko"},
+        data: {new_username: document.getElementById("login_user_input").value},
         success: function(response){
           if (response == "User Already Exists")  {
             document.getElementById("user_exists_alert").hidden = false;

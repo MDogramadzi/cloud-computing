@@ -2,9 +2,7 @@ CREATE DATABASE quiz;
 use quiz;
 
 CREATE TABLE user (
-  id int NOT NULL,
-  username VARCHAR(200),
-  PRIMARY KEY (id)
+  username VARCHAR(200)
 );
 
 CREATE TABLE question (
@@ -21,9 +19,9 @@ CREATE TABLE answer (
 );
 
 INSERT into user
-  (id, username)
+  (username)
 VALUES
-  (0, "Marko");
+  ("Marko");
 
 INSERT INTO question
   (qid, title)

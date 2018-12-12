@@ -7,36 +7,50 @@ import sys
 app = Flask(__name__, static_url_path='/static')
 app.debug = True
 
+config = {
+        'user': 'root',
+        'password': 'root',
+        'host': 'db',
+        'port': '3306',
+        'database': 'quiz'
+        }
+
 
 @app.route('/' , methods = ['GET','POST'])
 def index() -> str:
     if request.method == "POST":
         if 'new_username' in request.form:
 
-            print("Checking User")
-
-            config = {
-                'user': 'root',
-                'password': 'root',
-                'host': 'db',
-                'port': '3306',
-                'database': 'quiz'
-            }
+            print(request.form["new_username"])
 
             connection = mysql.connector.connect(**config)
             cursor = connection.cursor()
 
-            print("###")
-            cursor.execute("SELECT * FROM user")
-            print(cursor.fetchall())
-            cursor.close()
-            connection.close()
-            print("###")
-            sys.stdout.flush()
+            sql = "SELECT * FROM user WHERE username = %s"
+            user = (request.form["new_username"],)
+            cursor.execute(sql, user)
+            results = cursor.fetchall()
 
-            return "User Created Successfully"
+            print(results)
+
+            sys.stdout.flush()  # forcing prints to console
+
+            if len(results) == 0:
+                # user does not exist, so add them
+                insrt_sql = "INSERT INTO user (username) VALUES (%s)"
+                cursor.execute(insrt_sql, user)
+                connection.commit()
+                cursor.close()
+                connection.close()
+                return "User Created Successfully"
+            else:
+                # instance of user in database, they already exist
+                cursor.close()
+                connection.close()
+                return "User Already Exists"
+
         else:
-            # Start looking for a session for the user, username
+            # Start looking for a session for the user
             print("JOINING GAME")
  
     else:
