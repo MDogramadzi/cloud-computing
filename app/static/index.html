@@ -24,33 +24,40 @@
   <br>
   <div id="login">
     <div class="card text-center col-6" style="margin: 0 auto">
-        <div class="card-header">
-          <h3>Welcome to the Qloud</h3>
+      <div class="card-header">
+        <h3>Welcome to the Qloud</h3>
+      </div>
+      <div class="card-body">
+        <i class="fa fa-cloud fa-3x"></i>
+        <br>
+        <br>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">@</span>
+          </div>
+          <input id="login_user_input" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
         </div>
-        <div class="card-body">
-            <i class="fa fa-cloud fa-3x"></i>
-            <br>
-            <br>
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">@</span>
-              </div>
-              <input id="login_user_input" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-            </div>
-            <button id="submit_button" type="button" class="btn btn-success">Join Game</button>
-            <br><br>
-            <div id="user_created_alert" class="alert alert-success" role="alert" hidden>
-                User created successfully - you can join a game now!
-            </div>
-            <div id="user_exists_alert" class="alert alert-danger" role="alert" hidden>
-                This username has already been taken - try another!
-            </div>
-            <hr>
-            <h3>OR</h3>
-            <br>
-            <button id="login_type_button" type="button" onclick="login_type_selected()" class="btn btn-outline-primary">Create Account</button>
+        <div id="hide_on_join_div">
+          <button id="submit_button" type="button" class="btn btn-success" onclick="join_game()">Join Game</button>
+          <br><br>
+          <div id="user_created_alert" class="alert alert-success" role="alert" hidden>
+              User created successfully - you can join a game now!
+          </div>
+          <div id="user_exists_alert" class="alert alert-danger" role="alert" hidden>
+              This username has already been taken - try another!
+          </div>
+          <hr>
+          <h3>OR</h3>
+          <br>
+          <button id="login_type_button" type="button" onclick="login_type_selected()" class="btn btn-outline-primary">Create Account</button>
         </div>
+      </div>
     </div>
+  </div>
+
+  <br>
+  <div id="progress_bar" class="progress" style="margin: 0 auto; width: 50%" hidden>
+    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
   </div>
 
 
@@ -91,7 +98,28 @@
     function join_game()  {
 
       console.log("JOIN GAME");
+
+      document.getElementById("progress_bar").hidden = false;
+      document.getElementById("hide_on_join_div").hidden = true;
+
+      animate_progress_bar();
       
+
+    }
+
+    function animate_progress_bar()  {
+
+      var bar = document.getElementById("progress_bar");
+      var i = 0;
+      var counterBack = setInterval(function () {
+        i++;
+        if (i <= 10) {
+          $('.progress-bar').css('width', 10*i + '%');
+        } else {
+          clearInterval(counterBack);
+        }
+
+      }, 1000);
 
     }
 
