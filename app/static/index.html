@@ -56,10 +56,15 @@
   </div>
 
   <br>
-  <div id="progress_bar" class="progress" style="margin: 0 auto; width: 50%" hidden>
-    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+  <div id="progress_dialogue" hidden>
+    <div class="progress" style="margin: 0 auto; width: 50%">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+    </div>
+    <br>
+    <div class="alert alert-info" role="alert" style="margin: 0 auto; width: 50%">
+      Searching for an opponent. If none are found, you'll be paired with an AI.
+    </div>
   </div>
-
 
   <script>
 
@@ -98,8 +103,14 @@
     function join_game()  {
 
       console.log("JOIN GAME");
+      
+      var user = document.getElementById("login_user_input").value;
+      if (user == "")  {
+        alert("No User Entered");
+        return;
+      }
 
-      document.getElementById("progress_bar").hidden = false;
+      document.getElementById("progress_dialogue").hidden = false;
       document.getElementById("hide_on_join_div").hidden = true;
 
       animate_progress_bar();
