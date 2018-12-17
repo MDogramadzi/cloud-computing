@@ -1,10 +1,11 @@
 from typing import List, Dict
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 import mysql.connector
 import json
 import sys
 
 app = Flask(__name__, static_url_path='/static')
+app.secret_key = '45259547-5106-4f31-84b4-fa33ac37c73e'
 app.debug = True
 
 config = {
@@ -64,15 +65,18 @@ def index() -> str:
             if len(results) == 0:
                 return "User Does Not Exist"
             else:
+                session['username'] = request.form['login_username']
                 return "User Already Exists"
  
     else:
         return app.send_static_file('index.html')
-        
 
-@app.route('/connect')
-def connect() -> str:
-    return app.send_static_file('connect.html')
+
+@app.route('/game')
+def game() -> str:
+    print("HERE")
+    sys.stdout.flush()
+    return app.send_static_file('game.html')
 	
 
 if __name__ == '__main__':

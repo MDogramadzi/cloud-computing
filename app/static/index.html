@@ -77,7 +77,7 @@
       document.getElementById("user_not_exist_alert").hidden = true;
     });
     
-    
+
     function login_type_selected()  {
 
       if (document.getElementById("login_type_button").innerText == "Create Account")  {
@@ -146,10 +146,11 @@
       var i = 0;
       var counterBack = setInterval(function () {
         i++;
-        if (i <= 10) {
-          $('.progress-bar').css('width', 10*i + '%');
+        if (i <= 5) {
+          $('.progress-bar').css('width', 20*i + '%');
         } else {
           clearInterval(counterBack);
+          // route to game using AI
         }
 
       }, 1000);
