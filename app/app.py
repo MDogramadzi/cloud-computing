@@ -16,42 +16,55 @@ config = {
         }
 
 
+def get_connection():
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    return connection, cursor
+
+
+def kill_connection(connection, cursor):
+    cursor.close()
+    connection.close()
+
+
+def get_users_with_username(name):
+
+    con, cur = get_connection()
+    sql = "SELECT * FROM user WHERE username = %s"
+    user = (name,)
+    cur.execute(sql, user)
+    results = cur.fetchall()
+    kill_connection(con, cur)
+    return results
+
+
 @app.route('/' , methods = ['GET','POST'])
 def index() -> str:
     if request.method == "POST":
         if 'new_username' in request.form:
 
-            print(request.form["new_username"])
-
-            connection = mysql.connector.connect(**config)
-            cursor = connection.cursor()
-
-            sql = "SELECT * FROM user WHERE username = %s"
-            user = (request.form["new_username"],)
-            cursor.execute(sql, user)
-            results = cursor.fetchall()
-
-            print(results)
-
-            sys.stdout.flush()  # forcing prints to console
+            results = get_users_with_username(request.form["new_username"])
 
             if len(results) == 0:
                 # user does not exist, so add them
                 insrt_sql = "INSERT INTO user (username) VALUES (%s)"
-                cursor.execute(insrt_sql, user)
-                connection.commit()
-                cursor.close()
-                connection.close()
+                con, cur = get_connection()
+                user = (request.form["new_username"],)
+                cur.execute(insrt_sql, user)
+                con.commit()  # commit changes to db
+                kill_connection(con, cur)
                 return "User Created Successfully"
             else:
                 # instance of user in database, they already exist
-                cursor.close()
-                connection.close()
                 return "User Already Exists"
 
-        else:
-            # Start looking for a session for the user
-            print("JOINING GAME")
+        elif 'login_username' in request.form:
+
+            results = get_users_with_username(request.form["login_username"])
+            if len(results) == 0:
+                return "User Does Not Exist"
+            else:
+                return "User Already Exists"
  
     else:
         return app.send_static_file('index.html')

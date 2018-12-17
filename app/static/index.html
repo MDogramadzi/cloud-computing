@@ -111,12 +111,25 @@
       }
 
       // Need to check if user exists in database as well.
-
-      document.getElementById("progress_dialogue").hidden = false;
-      document.getElementById("hide_on_join_div").hidden = true;
-
-      animate_progress_bar();
-      
+      $.ajax({
+        type: 'post',
+        data: {login_username: document.getElementById("login_user_input").value},
+        success: function(response){
+          if (response == "User Already Exists")  {
+            document.getElementById("progress_dialogue").hidden = false;
+            document.getElementById("hide_on_join_div").hidden = true;
+            animate_progress_bar();
+            // Find other players
+          }
+          else if (response == "User Does Not Exist")  {
+            // Show warning - say user needs to make account
+            console.log("User does not exist");
+          }
+          else  {
+            console.log("GENERAL ERROR");
+          }
+        }
+      });
 
     }
 
