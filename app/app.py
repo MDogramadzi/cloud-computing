@@ -68,7 +68,7 @@ def index() -> str:
  
     else:
         return app.send_static_file('index.html')
-        #return json.dumps({'all_questions': all_questions()})
+        
 
 @app.route('/connect')
 def connect() -> str:
