@@ -46,6 +46,9 @@
           <div id="user_exists_alert" class="alert alert-danger" role="alert" hidden>
               This username has already been taken - try another!
           </div>
+          <div id="user_not_exist_alert" class="alert alert-danger" role="alert" hidden>
+            This username does not exist - create it!
+          </div>
           <hr>
           <h3>OR</h3>
           <br>
@@ -71,11 +74,13 @@
     $("#login_user_input").keyup( function() {
       document.getElementById("user_created_alert").hidden = true;
       document.getElementById("user_exists_alert").hidden = true;
+      document.getElementById("user_not_exist_alert").hidden = true;
     });
     
     function login_type_selected()  {
 
       if (document.getElementById("login_type_button").innerText == "Create Account")  {
+        document.getElementById("user_not_exist_alert").hidden = true;
         document.getElementById("login_type_button").innerText = "Login with Username";
 
         var form = document.getElementById("login_user_input");
@@ -123,7 +128,7 @@
           }
           else if (response == "User Does Not Exist")  {
             // Show warning - say user needs to make account
-            console.log("User does not exist");
+            document.getElementById("user_not_exist_alert").hidden = false;
           }
           else  {
             console.log("GENERAL ERROR");
