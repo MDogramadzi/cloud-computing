@@ -18,7 +18,7 @@ CREATE TABLE answer (
   FOREIGN KEY (question_id) REFERENCES question(qid)
 );
 
-INSERT into user
+INSERT INTO user
   (username)
 VALUES
   ("Marko");

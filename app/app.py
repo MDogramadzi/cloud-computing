@@ -74,7 +74,7 @@ def index() -> str:
 
 @app.route('/game')
 def game() -> str:
-    print("HERE")
+    print("Start Game")
     sys.stdout.flush()
     return app.send_static_file('game.html')
 	
