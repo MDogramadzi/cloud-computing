@@ -48,10 +48,19 @@ def get_questions_for_quiz():
     for k, *v in results:
         d[k].append(v)
     list(d.items())
-    
-    sys.stdout.flush()
+    all_results = []
+    for key in d:
+        d2 = defaultdict(list)
+        d2["question"] = key
+        all_choices = []
+        for x in d[key]:
+            all_choices.append(x[0])
+            if x[1] == 1:
+                d2["correct"] = x[0]
+        d2["choices"] = all_choices
+        all_results.append(d2)
     kill_connection(con, cur)
-    return results
+    return json.dumps(all_results)
 
 
 @app.route('/' , methods = ['GET','POST'])
@@ -89,17 +98,8 @@ def index() -> str:
 
 @app.route('/game-ai')
 def game_ai():
-    # pull in 10 random questions from db
-    # Format them as JSON:
-    # [
-    # {
-    #    question: "",
-    #    choices: ["", "", "", ""],
-    #    correct: ""
-    # }
-    # ]
-    questions = get_questions_for_quiz()
-    return render_template('game.html', username=session["username"], opponent="AI")
+    quiz = get_questions_for_quiz()
+    return render_template('game.html', username=session["username"], opponent="AI", quiz=quiz)
 
 
 @app.route('/summary')
