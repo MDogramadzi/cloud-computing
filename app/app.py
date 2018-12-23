@@ -38,6 +38,21 @@ def get_users_with_username(name):
     kill_connection(con, cur)
     return results
 
+from collections import defaultdict
+def get_questions_for_quiz():
+    con, cur = get_connection()
+    sql = "SELECT title, content, correct FROM question RIGHT JOIN answer ON question.qid=answer.question_id ORDER BY RAND() LIMIT 40"
+    cur.execute(sql)
+    results = cur.fetchall()  
+    d = defaultdict(list)
+    for k, *v in results:
+        d[k].append(v)
+    list(d.items())
+    
+    sys.stdout.flush()
+    kill_connection(con, cur)
+    return results
+
 
 @app.route('/' , methods = ['GET','POST'])
 def index() -> str:
@@ -74,6 +89,16 @@ def index() -> str:
 
 @app.route('/game-ai')
 def game_ai():
+    # pull in 10 random questions from db
+    # Format them as JSON:
+    # [
+    # {
+    #    question: "",
+    #    choices: ["", "", "", ""],
+    #    correct: ""
+    # }
+    # ]
+    questions = get_questions_for_quiz()
     return render_template('game.html', username=session["username"], opponent="AI")
 
 

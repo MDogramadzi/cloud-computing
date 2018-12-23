@@ -13,7 +13,7 @@ CREATE TABLE question (
 
 CREATE TABLE answer (
   aid int NOT NULL,
-  title VARCHAR(100),
+  content VARCHAR(100),
   correct BOOLEAN,
   question_id int NOT NULL,
   FOREIGN KEY (question_id) REFERENCES question(qid)
@@ -41,7 +41,7 @@ VALUES
 
 
 INSERT INTO answer
-  (aid, title, correct, question_id)
+  (aid, content, correct, question_id)
 VALUES
   (0, 'ZooKeeper', TRUE, 0),
   (1, 'MongoDB', FALSE, 0),
