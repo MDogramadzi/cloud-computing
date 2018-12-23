@@ -22,7 +22,7 @@
     var score = 0;
     var scoreAI = 0;
     var answerAI = 0;
-    var quiztitle = "{{ username }} : " + score + "     " + " {{ opponent }}";
+    var quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
 /**
 * Randomise the questions!
 */
@@ -252,7 +252,7 @@ quiz = shuffle(quiz);
     <style type="text/css" media="all">
 		/* QUIZ STYLES */
 		#frame 													{ width:auto; max-width: 800px; background:transparent; margin:3px auto; padding:10px; color:#333 !important; }
-		div#frame h2 											{ width:auto; border-bottom:1px solid #bdbdbd; padding:0 0 5px 0; font-size:30px; }
+		div#frame h2 											{ width:auto; border-bottom:1px solid #bdbdbd; padding:0 0 5px 0; font-size:30px; text-align:center;}
 		h3.question 											{ font-weight:normal; margin:20px 0; margin-top: -385px; padding:0; font-style:italic; display:block; }
 		p.pager 												{ margin:5px 0 5px; color:#999; text-align:right; }
 		.qnumber 												{ font-size:25px; font-weight:bold; font-style:italic; vertical-align:bottom; }
