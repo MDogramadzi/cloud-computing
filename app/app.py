@@ -72,9 +72,14 @@ def index() -> str:
         return app.send_static_file('index.html')
 
 
-@app.route('/game')
-def game():
-    return render_template('game.html', username=session["username"])
+@app.route('/game-ai')
+def game_ai():
+    return render_template('game.html', username=session["username"], opponent="AI")
+
+
+@app.route('/summary')
+def summary():
+    return render_template('summary.html')
 	
 
 if __name__ == '__main__':
