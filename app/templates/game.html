@@ -17,7 +17,12 @@
     var start = 1;
     var i = 11;
     var correctQuestions=0;
-    var quiztitle = "{{ username }} VS {{ opponent }}";
+    var timeAI = 0;
+    var correctAI = 0;
+    var score = 0;
+    var scoreAI = 0;
+    var answerAI = 0;
+    var quiztitle = "{{ username }} : " + score + "     " + " {{ opponent }}";
 /**
 * Randomise the questions!
 */
@@ -83,7 +88,7 @@ quiz.forEach(q => q.choices.scramble());
 		
 quiz = shuffle(quiz);
 	    
-    var currentquestion = 0, score = 0, picked;
+    var currentquestion = 0, picked;
     jQuery(document).ready(function($){
         /**
          * HTML Encoding function for alt tags and attributes to prevent messy
@@ -122,6 +127,12 @@ quiz = shuffle(quiz);
          * After a selection is submitted, check if its the right answer and score
          */
         function processQuestion(choice){
+            timeAI = Math.floor(Math.random() * 11);
+            correctAI = getRandomInt(0,1);
+            answerAI = timeAI * correctAI;
+            console.log("This is the ANSWER SCORE " + answerAI);
+            scoreAI = scoreAI + answerAI;
+            console.log("This is the score Score " + scoreAI);
             if (currentquestion != quiz.length){
             if(quiz[currentquestion]['choices'][choice] == quiz[currentquestion]['correct']){
 				    $('.choice').eq(choice).addClass('btn-success').css({'font-weight':'bold', 'border-color':'#51a351', 'color':'green'});
@@ -168,7 +179,8 @@ quiz = shuffle(quiz);
             $('#question').css("margin-top", "10px");
 			$('.rsform-block-submit').addClass('show');
 			$('#question').text("You got " + correctQuestions + " out of " + quiz.length + " correct.");
-            $(document.createElement('h4')).addClass('score').text(Math.round(score)).insertAfter('#question');			
+            $(document.createElement('h4')).addClass('score').text(Math.round(score)).insertAfter('#question');
+            $(document.createElement('h4')).addClass('scoreAI').text(Math.round(scoreAI)).insertAfter('.score');			
         }
         
 
@@ -195,6 +207,12 @@ quiz = shuffle(quiz);
                 }, 1000);}else{
 
                 }
+        }
+
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
 
