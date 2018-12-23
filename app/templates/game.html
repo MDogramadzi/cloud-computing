@@ -14,7 +14,9 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
    <script>
-    var seconds = 0;
+    var start = 0;
+    var i = 11;
+    var correctQuestions=0;
     var quiztitle = "{{ username }} VS {{ opponent }}";
 /**
 * Randomise the questions!
@@ -109,7 +111,7 @@ quiz = shuffle(quiz);
          */
 		function nextQuestion(){
             $('#explanation').empty();
-            seconds = 0;
+            i = 11; // might change when delay is applied
 			$('#question').text(quiz[currentquestion]['question']); /* here change with SQL question*/
 			$('#pager').text('Question ' + Number(currentquestion + 1) + ' of 10');
 			addChoices(quiz[currentquestion]['choices']);
@@ -120,21 +122,22 @@ quiz = shuffle(quiz);
          * After a selection is submitted, check if its the right answer and score
          */
         function processQuestion(choice){
-            clearTimeout(t);
-            alert(10-seconds);
-          if(quiz[currentquestion]['choices'][choice] == quiz[currentquestion]['correct']){
+            alert("goce " + i);
+            if(quiz[currentquestion]['choices'][choice] == quiz[currentquestion]['correct']){
 				    $('.choice').eq(choice).addClass('btn-success').css({'font-weight':'bold', 'border-color':'#51a351', 'color':'green'});
 				    $('#explanation').html('<span class="correct">CORRECT!</span> ' + htmlEncode(quiz[currentquestion]['explanation']));
-				    score++;
+                    score = score + i;
+                    correctQuestions++;
 			    } else {
             $('.choice').eq(choice).addClass('btn-danger').css({'font-weight':'bold', 'border-color':'#f93939', 'color':'red'});
             $('#explanation').html('<span class="incorrect">INCORRECT!</span> ' + htmlEncode(quiz[currentquestion]['explanation']));
             }
             currentquestion++;
 			if(currentquestion == quiz.length){
+                    start = 0;
 					endQuiz();
 			} else if (currentquestion < quiz.length){
-					nextQuestion();
+                    nextQuestion();
 			} else {
         console.log("This should not happen");
 			}
@@ -145,10 +148,10 @@ quiz = shuffle(quiz);
          */
 		function setupButtons(){
 			$('.choice').on('click', function(){
-				picked = $(this).attr('data-index');
+                picked = $(this).attr('data-index');
 				$('.choice').removeAttr('style').off('mouseout mouseover');
-				$(this).css({'font-weight':'bold'});
-				processQuestion(picked);
+                $(this).css({'font-weight':'bold'});
+                processQuestion(picked);
 			})
 		}
         
@@ -156,6 +159,7 @@ quiz = shuffle(quiz);
          * Quiz ends, display a message.
          */
 		function endQuiz(){
+            start = 0;
 			$('#explanation').empty();
 			$('#question').empty();
 			$('#choice-block').empty();
@@ -163,42 +167,35 @@ quiz = shuffle(quiz);
             $('#barr').hide();
             $('#question').css("margin-top", "10px");
 			$('.rsform-block-submit').addClass('show');
-			$('#question').text("You got " + score + " out of " + quiz.length + " correct.");
-			$(document.createElement('h4')).addClass('score').text(Math.round(score/quiz.length * 100) + '%').insertAfter('#question');			
+			$('#question').text("You got " + correctQuestions + " out of " + quiz.length + " correct.");
+            $(document.createElement('h4')).addClass('score').text(Math.round(score)).insertAfter('#question');			
         }
         
 
         function animate_progress_bar()  {
-            var i = 10;
+            $('#progress_bar').css("background-color", "#7CFC00");
+            if (start == 1){
 			var counterBack = setInterval(function () {
-                i--;
-                if (i >= 0) {
+                if (i > 0) {
+                    i--;
                     $('#progress_bar').css('height', 10*i + '%');
                     if (i <= 6 && i > 4){
                         $('#progress_bar').css("background-color", "#FFD700");
                     } else if (i <= 4){
                         $('#progress_bar').css("background-color", "#FF0000");
                     } 
-                } else {
+                }
+                else {
+                    alert("Gooooce");
                     clearInterval(counterBack);
+                    animate_progress_bar();
+                    processQuestion(4);
                 }
 
             }, 1000);
-
+        } else {
+            
         }
-
-        
-        function add() {
-
-        seconds++;
-        if (seconds == 10) {
-            seconds = 0;
-        }
-        timer();
-        }
-
-        function timer() {
-        t = setTimeout(add, 1000);
         }
 
 
@@ -229,11 +226,10 @@ quiz = shuffle(quiz);
 				//add choices
                 addChoices(quiz[0]['choices']);
                 
-
+                start = 1;
 				
                 setupButtons();
                 animate_progress_bar();
-                timer();
 			}
 		}
 	
