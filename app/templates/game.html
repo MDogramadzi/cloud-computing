@@ -58,30 +58,7 @@ if (!("scramble" in Array.prototype)) {
   });
 }		
 	    
-    var quiz = [
-        {
-            "question"      :   "Who came up with the theory of relativity?",
-            "choices"       :   [
-                                    "Sir Isaac Newton",
-                                    "Nicolaus Copernicus",
-                                    "Albert Einstein",
-                                    "Ralph Waldo Emmerson"
-                                ],
-            "correct"       :   "Albert Einstein",
-            "explanation"   :   "Albert Einstein drafted the special theory of relativity in 1905.",
-        },
-        {
-            "question"      :   "Who is on the two dollar bill?",
-            "choices"       :   [
-                                    "Thomas Jefferson",
-                                    "Dwight D. Eisenhower",
-                                    "Benjamin Franklin",
-                                    "Abraham Lincoln"
-                                ],
-            "correct"       :   "Thomas Jefferson",
-            "explanation"   :   "The two dollar bill is seldom seen in circulation. As a result, some businesses are confused when presented with the note.",
-        }
-    ];
+var quiz = {{ quiz | safe }};
 
 quiz.forEach(q => q.choices.scramble());
 //console.log(quiz[0].choices);
@@ -220,6 +197,8 @@ quiz = shuffle(quiz);
          * Create all of the elements for the quiz
          */
 		function init(){
+
+            
 
             //add title
 			if(typeof quiztitle !== "undefined" && $.type(quiztitle) === "string"){
