@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
    <script>
-    var start = 0;
+    var start = 1;
     var i = 11;
     var correctQuestions=0;
     var quiztitle = "{{ username }} VS {{ opponent }}";
@@ -122,24 +122,24 @@ quiz = shuffle(quiz);
          * After a selection is submitted, check if its the right answer and score
          */
         function processQuestion(choice){
-            alert("goce " + i);
+            if (currentquestion != quiz.length){
             if(quiz[currentquestion]['choices'][choice] == quiz[currentquestion]['correct']){
 				    $('.choice').eq(choice).addClass('btn-success').css({'font-weight':'bold', 'border-color':'#51a351', 'color':'green'});
-				    $('#explanation').html('<span class="correct">CORRECT!</span> ' + htmlEncode(quiz[currentquestion]['explanation']));
+                    $('#explanation').html('<span class="correct">CORRECT!</span> ' + htmlEncode(quiz[currentquestion]['explanation']));
+                    if(i > 10){ i = 10;}
                     score = score + i;
                     correctQuestions++;
 			    } else {
             $('.choice').eq(choice).addClass('btn-danger').css({'font-weight':'bold', 'border-color':'#f93939', 'color':'red'});
             $('#explanation').html('<span class="incorrect">INCORRECT!</span> ' + htmlEncode(quiz[currentquestion]['explanation']));
-            }
+            }}
             currentquestion++;
 			if(currentquestion == quiz.length){
-                    start = 0;
 					endQuiz();
 			} else if (currentquestion < quiz.length){
                     nextQuestion();
 			} else {
-        console.log("This should not happen");
+        console.log("You have reached THE END");
 			}
 			
 		}
@@ -173,29 +173,28 @@ quiz = shuffle(quiz);
         
 
         function animate_progress_bar()  {
-            $('#progress_bar').css("background-color", "#7CFC00");
-            if (start == 1){
-			var counterBack = setInterval(function () {
-                if (i > 0) {
-                    i--;
-                    $('#progress_bar').css('height', 10*i + '%');
-                    if (i <= 6 && i > 4){
-                        $('#progress_bar').css("background-color", "#FFD700");
-                    } else if (i <= 4){
-                        $('#progress_bar').css("background-color", "#FF0000");
-                    } 
-                }
-                else {
-                    alert("Gooooce");
-                    clearInterval(counterBack);
-                    animate_progress_bar();
-                    processQuestion(4);
-                }
+//$('#progress_bar').css("background-color", "#7CFC00");
+            if(start == 1){
+                var counterBack = setInterval(function () {
+                    $('#progress_bar').css("background-color", "#7CFC00");
+                    if (start == 1){
+                    if (i > 0) {
+                        i--;
+                        $('#progress_bar').css('height', 10*i + '%');
+                        if (i <= 6 && i > 4){
+                            $('#progress_bar').css("background-color", "#FFD700");
+                        } else if (i <= 4){
+                            $('#progress_bar').css("background-color", "#FF0000");
+                        } 
+                    } else {
+                        clearInterval(counterBack);
+                        animate_progress_bar();
+                        processQuestion(4);
+                    }
+                }else {}
+                }, 1000);}else{
 
-            }, 1000);
-        } else {
-            
-        }
+                }
         }
 
 
@@ -209,8 +208,8 @@ quiz = shuffle(quiz);
 				$(document.createElement('h2')).text(quiztitle).appendTo('#frame');
 			} else {
 				$(document.createElement('h2')).text("Quiz").appendTo('#frame');
-			}
-			
+            }
+            
 			//add pager and questions
 			if(typeof quiz !== "undefined" && $.type(quiz) === "array"){
 				//add pager
@@ -225,9 +224,6 @@ quiz = shuffle(quiz);
 				
 				//add choices
                 addChoices(quiz[0]['choices']);
-                
-                start = 1;
-				
                 setupButtons();
                 animate_progress_bar();
 			}
