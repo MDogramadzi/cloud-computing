@@ -22,7 +22,7 @@
     var score = 0;
     var scoreAI = 0;
     var answerAI = 0;
-    var quiztitle = "{{ username }} : " + score + "     " + " {{ opponent }}";
+    var quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
 /**
 * Randomise the questions!
 */
@@ -107,9 +107,7 @@ quiz = shuffle(quiz);
             timeAI = Math.floor(Math.random() * 11);
             correctAI = getRandomInt(0,1);
             answerAI = timeAI * correctAI;
-            console.log("This is the ANSWER SCORE " + answerAI);
             scoreAI = scoreAI + answerAI;
-            console.log("This is the score Score " + scoreAI);
             if (currentquestion != quiz.length){
             if(quiz[currentquestion]['choices'][choice] == quiz[currentquestion]['correct']){
 				    $('.choice').eq(choice).addClass('btn-success').css({'font-weight':'bold', 'border-color':'#51a351', 'color':'green'});
@@ -121,6 +119,8 @@ quiz = shuffle(quiz);
             $('.choice').eq(choice).addClass('btn-danger').css({'font-weight':'bold', 'border-color':'#f93939', 'color':'red'});
             $('#explanation').html('<span class="incorrect">INCORRECT!</span> ' + htmlEncode(quiz[currentquestion]['explanation']));
             }}
+            quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
+            document.getElementById("scoreboard").innerHTML = quiztitle;
             currentquestion++;
 			if(currentquestion == quiz.length){
 					endQuiz();
@@ -157,7 +157,6 @@ quiz = shuffle(quiz);
 			$('.rsform-block-submit').addClass('show');
 			$('#question').text("You got " + correctQuestions + " out of " + quiz.length + " correct.");
             $(document.createElement('h4')).addClass('score').text(Math.round(score)).insertAfter('#question');
-            $(document.createElement('h4')).addClass('scoreAI').text(Math.round(scoreAI)).insertAfter('.score');			
         }
         
 
@@ -202,7 +201,7 @@ quiz = shuffle(quiz);
 
             //add title
 			if(typeof quiztitle !== "undefined" && $.type(quiztitle) === "string"){
-				$(document.createElement('h2')).text(quiztitle).appendTo('#frame');
+				$(document.createElement('h2')).attr('id', 'scoreboard').text(quiztitle).appendTo('#frame');
 			} else {
 				$(document.createElement('h2')).text("Quiz").appendTo('#frame');
             }
@@ -252,7 +251,7 @@ quiz = shuffle(quiz);
     <style type="text/css" media="all">
 		/* QUIZ STYLES */
 		#frame 													{ width:auto; max-width: 800px; background:transparent; margin:3px auto; padding:10px; color:#333 !important; }
-		div#frame h2 											{ width:auto; border-bottom:1px solid #bdbdbd; padding:0 0 5px 0; font-size:30px; text-align:center; }
+		div#frame h2 											{ width:auto; border-bottom:1px solid #bdbdbd; padding:0 0 5px 0; font-size:30px; text-align:center;}
 		h3.question 											{ font-weight:normal; margin:20px 0; margin-top: 0px; padding:0; font-style:italic; display:block; }
 		p.pager 												{ margin:5px 0 5px; color:#999; text-align:right; }
 		.qnumber 												{ font-size:25px; font-weight:bold; font-style:italic; vertical-align:bottom; }
@@ -272,7 +271,7 @@ quiz = shuffle(quiz);
     <div class="container">
     <div class="row">
     <div class="col-2">
-                <div id="barr" class="progress progress-bar-vertical" style="width: 30px; height: 420px;  min-height: 100px; display: flex; align-items: flex-end; margin-left: 100px; margin-top: 50px; float: left;">
+                <div id="barr" class="progress progress-bar-vertical" style="width: 30px; height: 87%;  min-height: 100px; display: flex; align-items: flex-end; margin-left: 100px; margin-top: 50px; float: left;">
                   <div id="progress_bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="height: 100%;  width: 100%; background-color: #7CFC00; -webkit-transition: height 0.6s ease; -o-transition: height 0.6s ease; transition: height 0.6s ease; ">
                   </div>
                 </div>
