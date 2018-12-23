@@ -252,8 +252,8 @@ quiz = shuffle(quiz);
     <style type="text/css" media="all">
 		/* QUIZ STYLES */
 		#frame 													{ width:auto; max-width: 800px; background:transparent; margin:3px auto; padding:10px; color:#333 !important; }
-		div#frame h2 											{ width:auto; border-bottom:1px solid #bdbdbd; padding:0 0 5px 0; font-size:30px; }
-		h3.question 											{ font-weight:normal; margin:20px 0; margin-top: -385px; padding:0; font-style:italic; display:block; }
+		div#frame h2 											{ width:auto; border-bottom:1px solid #bdbdbd; padding:0 0 5px 0; font-size:30px; text-align:center; }
+		h3.question 											{ font-weight:normal; margin:20px 0; margin-top: 0px; padding:0; font-style:italic; display:block; }
 		p.pager 												{ margin:5px 0 5px; color:#999; text-align:right; }
 		.qnumber 												{ font-size:25px; font-weight:bold; font-style:italic; vertical-align:bottom; }
 		.number 												{ font-size:25px; font-weight:bold; font-style:normal; vertical-align:inherit; padding-right:10px; }
@@ -270,13 +270,18 @@ quiz = shuffle(quiz);
 <div class="form-group rsform-block rsform-block-framecontent">
 
     <div class="container">
-                <div id="barr" class="progress progress-bar-vertical" style="width: 30px; height: 430px;  min-height: 100px; display: flex; align-items: flex-end; margin-left: 100px; margin-top: 70px; float: left;">
+    <div class="row">
+    <div class="col-2">
+                <div id="barr" class="progress progress-bar-vertical" style="width: 30px; height: 420px;  min-height: 100px; display: flex; align-items: flex-end; margin-left: 100px; margin-top: 50px; float: left;">
                   <div id="progress_bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="height: 100%;  width: 100%; background-color: #7CFC00; -webkit-transition: height 0.6s ease; -o-transition: height 0.6s ease; transition: height 0.6s ease; ">
                   </div>
                 </div>
+                </div>
+                <div class="col-8">
 
     <div id="frame" role="content"></div>
-
+</div>
+</div>
 </div>
 </div>
 <hr>		
