@@ -104,23 +104,26 @@ quiz = shuffle(quiz);
          * After a selection is submitted, check if its the right answer and score
          */
         function processQuestion(choice){
+            if ("{{ opponent }}" == "AI"){
             timeAI = Math.floor(Math.random() * 11);
             correctAI = getRandom();
-            console.log(correctAI);
             answerAI = timeAI * correctAI;
-            scoreAI = scoreAI + answerAI;
+            scoreAI = scoreAI + answerAI; }
+            else {
+                // get score of opponent
+            }
+
             if (currentquestion != quiz.length){
             if(quiz[currentquestion]['choices'][choice] == quiz[currentquestion]['correct']){
 				    $('.choice').eq(choice).addClass('btn-success').css({'font-weight':'bold', 'border-color':'#51a351', 'color':'green'});
-                    $('#explanation').html('<span class="correct">CORRECT!</span> ' + htmlEncode(quiz[currentquestion]['explanation']));
                     if(i > 10){ i = 10;}
                     score = score + i;
+                    // send the score to the table score is ..............i
                     correctQuestions++;
 			    } else {
             $('.choice').eq(choice).addClass('btn-danger').css({'font-weight':'bold', 'border-color':'#f93939', 'color':'red'});
-            $('#explanation').html('<span class="incorrect">INCORRECT!</span> ' + htmlEncode(quiz[currentquestion]['explanation']));
             }}
-            quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
+            quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreOpponent + " : {{ opponent }}";
             document.getElementById("scoreboard").innerHTML = quiztitle;
             currentquestion++;
 			if(currentquestion == quiz.length){
@@ -215,7 +218,7 @@ quiz = shuffle(quiz);
 			//add pager and questions
 			if(typeof quiz !== "undefined" && $.type(quiz) === "array"){
 				//add pager
-				$(document.createElement('p')).addClass('pager').attr('id','pager').text('Question 1 of 10').appendTo('#frame');
+				$(document.createElement('p')).addClass('pager').attr('id','pager').text('Question 1 of' + quiz.length).appendTo('#frame');
 				//add first question
 				$(document.createElement('h3')).addClass('question').attr('id', 'question').text(quiz[0]['question']).appendTo('#frame');
 				
