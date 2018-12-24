@@ -140,6 +140,18 @@ quiz.forEach(q => q.choices.scramble());
             quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
             document.getElementById("scoreboard").innerHTML = quiztitle;
 			if(currentquestion == quiz.length-1){
+                    $.ajax({
+                        type: 'post',
+                        data: {username: "{{ username | safe }}",
+                            opponent: "{{ opponent | safe }}"
+                            },
+                        success: function(response){
+                            console.log("Opponent's score is " + String(response))
+                            scoreAI = parseInt(response)
+                            quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
+                            document.getElementById("scoreboard").innerHTML = quiztitle;
+                        }
+                    });
 					endQuiz();
 			} else if (currentquestion < quiz.length){
                 if(i == 0){
@@ -193,6 +205,16 @@ quiz.forEach(q => q.choices.scramble());
 			$('.rsform-block-submit').addClass('show');
 			$('#question').text("You got " + correctQuestions + " out of " + quiz.length + " correct.");
             $(document.createElement('h4')).addClass('score').text(Math.round(score)).insertAfter('#question');
+            $.ajax({
+                type: 'post',
+                data: {username_deact: "{{ username | safe }}",
+                       opponent_deact: "{{ opponent | safe }}"
+                    },
+                success: function(response){
+                    console.log(String(response));
+                }
+            });
+        
         }
         
 
