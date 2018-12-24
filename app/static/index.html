@@ -145,7 +145,7 @@
       var i = 0;
       var counterBack = setInterval(function () {
         i++;
-        if (i <= 20) {
+        if (i <= 40) {
           $('.progress-bar').css('width', 5*i + '%');
           find_opponents();
         } else {
@@ -154,7 +154,7 @@
           window.location.href = "/game-ai";
         }
 
-      }, 1000);
+      }, 500);
 
     }
 

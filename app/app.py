@@ -44,7 +44,6 @@ def get_questions_for_quiz():
     mix_id = 0
     try:
         mix_id = session['mix_id']
-        print("MIX ID SET TO ", mix_id)
     except KeyError:
         mix_id = random.randint(0,1)
     con, cur = get_connection()
@@ -78,6 +77,9 @@ def get_questions_for_quiz():
 def index() -> str:
     if request.method == "POST":
         if 'new_username' in request.form:
+
+            if request.form['new_username'] == "AI":
+                "User Already Exists"
 
             results = get_users_with_username(request.form["new_username"])
 
