@@ -107,6 +107,7 @@ quiz.forEach(q => q.choices.scramble());
          * After a selection is submitted, check if its the right answer and score
          */
         function processQuestion(choice){
+                                console.log("picked is beg " + choice);
             if (currentquestion != quiz.length){
                 console.log("process question function");
                 if(quiz[currentquestion]['choices'][choice] == quiz[currentquestion]['correct']){
@@ -130,8 +131,11 @@ quiz.forEach(q => q.choices.scramble());
                     $('.choice').eq(choice).addClass('btn-danger').css({'font-weight':'bold', 'border-color':'#f93939', 'color':'red'});
                     }
             }
+
             quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
             document.getElementById("scoreboard").innerHTML = quiztitle;
+
+
 			if(currentquestion == quiz.length-1){
                 if ("{{ opponent }}" != "AI"){
                     $.ajax({
@@ -145,7 +149,11 @@ quiz.forEach(q => q.choices.scramble());
                             quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
                             document.getElementById("scoreboard").innerHTML = quiztitle;
                         }
-                    });}else {
+                    });}
+                    else {
+                        console.log("picked is end " + choice);
+                    }
+                    if (i == 0){
                     timeAI = Math.floor(Math.random() * 11);
                     correctAI = getRandom();
                     answerAI = timeAI * correctAI;
@@ -155,35 +163,36 @@ quiz.forEach(q => q.choices.scramble());
                     console.log("AI Score is : " + scoreAI);
                     quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
                     document.getElementById("scoreboard").innerHTML = quiztitle;
-                    }
-                    if (i == 0){
+                    console.log("ENDQUIZ FUNction call")
 					endQuiz();}
 			} else if (currentquestion < quiz.length){
                 if(i == 0){
                     // get score of opponent
                     if ("{{ opponent }}" != "AI"){
-                console.log("Asking for score");
-                $.ajax({
-                    type: 'post',
-                    data: {username: "{{ username | safe }}",
-                           opponent: "{{ opponent | safe }}"
-                           },
-                    success: function(response){
-                        console.log("Opponent's score is " + String(response))
-                        scoreAI = parseInt(response)
+                        console.log("Asking for score");
+                        $.ajax({
+                            type: 'post',
+                            data: {username: "{{ username | safe }}",
+                                opponent: "{{ opponent | safe }}"
+                                },
+                            success: function(response){
+                                console.log("Opponent's score is " + String(response))
+                                scoreAI = parseInt(response)
+                                quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
+                                document.getElementById("scoreboard").innerHTML = quiztitle;
+                            }
+                        });
+                    } else {   
+                        console.log("Update score at each question");              
+                        timeAI = Math.floor(Math.random() * 11);
+                        correctAI = getRandom();
+                        answerAI = timeAI * correctAI;
+                        scoreAI = scoreAI + answerAI;
+                        console.log("Time AI: " + timeAI);
+                        console.log("Random Correct: " + correctAI);
+                        console.log("AI Score is : " + scoreAI);
                         quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
                         document.getElementById("scoreboard").innerHTML = quiztitle;
-                    }
-                });} else{                 
-                    timeAI = Math.floor(Math.random() * 11);
-                    correctAI = getRandom();
-                    answerAI = timeAI * correctAI;
-                    scoreAI = scoreAI + answerAI;
-                    console.log("Time AI: " + timeAI);
-                    console.log("Random Correct: " + correctAI);
-                    console.log("AI Score is : " + scoreAI);
-                    quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
-                    document.getElementById("scoreboard").innerHTML = quiztitle;
                     }
                     currentquestion++;
                     $("#choice-block").css("pointer-events","auto");
@@ -246,9 +255,9 @@ quiz.forEach(q => q.choices.scramble());
                     if (i > 0) {
                         i--;
                         $('#progress_bar').css('height', 10*i + '%');
-                        if (i <= 6 && i > 4){
+                        if (i <= 5 && i > 3){
                             $('#progress_bar').css("background-color", "#FFD700");
-                        } else if (i <= 4){
+                        } else if (i <= 3){
                             $('#progress_bar').css("background-color", "#FF0000");
                         } 
                     } else {
@@ -272,8 +281,8 @@ quiz.forEach(q => q.choices.scramble());
 
         function getRandom(){
             var num=Math.random();
-            if(num < 0.3) return 0;  //probability 0.3
-            else return 1;  //probability 0.7
+            if(num < 0.2) return 0;  //probability 0.2
+            else return 1;  //probability 0.8
             }
 
         /**
