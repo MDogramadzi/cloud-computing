@@ -117,10 +117,15 @@ def find_opponent(player_name):
         con.commit()
         kill_connection(con, cur)
         return "Added to matchmaking table"
-    elif player_name in all_names:
-        kill_connection(con, cur)
-        return "Already added to matchmaking table"
     else:
+        if player_name in all_names and len(all_names) == 1:
+            return "Already in Matchmaking Table Alone"
+        all_names.remove(player_name)
+        opponent = all_names[0]
+        sql_game = "INSERT INTO game (score_1, score_2, player_1, player_2 VALUES (0,0,%s,%s)"
+        players = (opponent, player_name)
+        cur.execute(sql_game, players)
+        con.commit()
         kill_connection(con, cur)
         return "Match with the first entry in results"
 
