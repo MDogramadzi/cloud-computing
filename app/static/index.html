@@ -145,8 +145,8 @@
       var i = 0;
       var counterBack = setInterval(function () {
         i++;
-        if (i <= 5) {
-          $('.progress-bar').css('width', 20*i + '%');
+        if (i <= 40) {
+          $('.progress-bar').css('width', 5*i + '%');
           find_opponents();
         } else {
           clearInterval(counterBack);
@@ -154,18 +154,20 @@
           window.location.href = "/game-ai";
         }
 
-      }, 5000);
+      }, 500);
 
     }
 
 
     function find_opponents()  {
 
-      console.log("Check server for opponents");
       $.ajax({
         type: 'post',
         data: {player_name: document.getElementById("login_user_input").value},
         success: function(response){
+          if (String(response) == "Found Match")  {
+            window.location.href = "/game";
+          }
           console.log(String(response))
         }
       });

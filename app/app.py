@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, session
 import mysql.connector
 import json
 import sys
+import random
 
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = '45259547-5106-4f31-84b4-fa33ac37c73e'
@@ -40,8 +41,13 @@ def get_users_with_username(name):
 
 from collections import defaultdict
 def get_questions_for_quiz():
+    mix_id = 0
+    try:
+        mix_id = session['mix_id']
+    except KeyError:
+        mix_id = random.randint(0,1)
     con, cur = get_connection()
-    sql = "SELECT title, content, correct FROM question RIGHT JOIN answer ON question.qid=answer.question_id ORDER BY RAND() LIMIT 40"
+    sql = "SELECT title, content, correct FROM question RIGHT JOIN answer ON question.qid=answer.question_id LIMIT 40"
     cur.execute(sql)
     results = cur.fetchall()  
     d = defaultdict(list)
@@ -59,6 +65,10 @@ def get_questions_for_quiz():
                 d2["correct"] = x[0]
         d2["choices"] = all_choices
         all_results.append(d2)
+    if mix_id == 0:
+        all_results = all_results[:5]
+    else:
+        all_results = all_results[5:]
     kill_connection(con, cur)
     return json.dumps(all_results)
 
@@ -67,6 +77,9 @@ def get_questions_for_quiz():
 def index() -> str:
     if request.method == "POST":
         if 'new_username' in request.form:
+
+            if request.form['new_username'] == "AI":
+                "User Already Exists"
 
             results = get_users_with_username(request.form["new_username"])
 
@@ -94,6 +107,8 @@ def index() -> str:
 
         elif 'player_name' in request.form:
 
+            if check_game_created(request.form["player_name"]) is True:
+                return "Found Match"
             status = find_opponent(request.form["player_name"])
             print(status)
             return status
@@ -120,23 +135,48 @@ def find_opponent(player_name):
     else:
         if player_name in all_names and len(all_names) == 1:
             return "Already in Matchmaking Table Alone"
-        all_names = [x for x in all_names if x != player_name]
-        opponent = all_names[0]
-        players = (opponent, player_name)
-        sql_updt_mat = "UPDATE matchmaking SET searching = FALSE WHERE username = %s OR username = %s"
-        cur.execute(sql_updt_mat, players)
-        sql_game = "INSERT INTO game (score_1, score_2, player_1, player_2) VALUES (0,0,%s,%s)"
-        cur.execute(sql_game, players)
-        con.commit()
-        kill_connection(con, cur)
-        return "Match with the first entry in results"
+        else:
+            all_names = [x for x in all_names if x != player_name]
+            opponent = all_names[0]
+            players = (opponent, player_name)
+            sql_updt_mat = "UPDATE matchmaking SET searching = FALSE WHERE username = %s OR username = %s"
+            cur.execute(sql_updt_mat, players)
+            mix_id = random.randint(0,1)
+            session['mix_id'] = mix_id
+            session['opponent'] = opponent
+            players = (opponent, player_name, mix_id)
+            sql_game = "INSERT INTO game (score_1,score_2,player_1,player_2,mix_id) VALUES (0,0,%s,%s,%s)"
+            cur.execute(sql_game, players)
+            con.commit()
+            kill_connection(con, cur)
+            return "Found Match"
 
+
+def check_game_created(player_name):
+    print("Check Game Created")
+    con, cur = get_connection()
+    sql_chck_game = "SELECT * FROM game WHERE player_1 = %s"
+    player = (player_name,)
+    cur.execute(sql_chck_game, player)
+    results = cur.fetchall()
+    kill_connection(con, cur)
+    if len(results) != 0:
+        session['opponent'] = results[0][3]
+        return True
+    else:
+        return False
 
 
 @app.route('/game-ai')
 def game_ai():
     quiz = get_questions_for_quiz()
     return render_template('game.html', username=session["username"], opponent="AI", quiz=quiz)
+
+
+@app.route('/game')
+def game():
+    quiz = get_questions_for_quiz()
+    return render_template('game.html', username=session["username"], opponent=session['opponent'], quiz=quiz)
 
 
 @app.route('/summary')

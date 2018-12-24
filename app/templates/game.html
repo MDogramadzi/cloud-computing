@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+    <link rel="icon" href="/static/img/favicon-cloud.ico">
+
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="initial-scale=1.0">
@@ -25,7 +28,7 @@
     var quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
 /**
 * Randomise the questions!
-*/
+
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex;
   // While there remain elements to shuffle...
@@ -40,6 +43,7 @@ function shuffle(array) {
   }
   return array;
 }
+*/
 
 // Scramble the answers every time	    
 if (!("scramble" in Array.prototype)) {
@@ -63,7 +67,7 @@ var quiz = {{ quiz | safe }};
 quiz.forEach(q => q.choices.scramble());
 //console.log(quiz[0].choices);
 		
-quiz = shuffle(quiz);
+//quiz = shuffle(quiz);
 	    
     var currentquestion = 0, picked;
     jQuery(document).ready(function($){
@@ -95,7 +99,7 @@ quiz = shuffle(quiz);
             $('#explanation').empty();
             i = 11; // might change when delay is applied
 			$('#question').text(quiz[currentquestion]['question']); /* here change with SQL question*/
-			$('#pager').text('Question ' + Number(currentquestion + 1) + ' of 10');
+			$('#pager').text('Question ' + Number(currentquestion + 1) + ' of ' + quiz.length);
 			addChoices(quiz[currentquestion]['choices']);
 			setupButtons();
 			
@@ -118,12 +122,12 @@ quiz = shuffle(quiz);
 				    $('.choice').eq(choice).addClass('btn-success').css({'font-weight':'bold', 'border-color':'#51a351', 'color':'green'});
                     if(i > 10){ i = 10;}
                     score = score + i;
-                    // send the score to the table score is ..............i
+                    // send the score to the table score is 
                     correctQuestions++;
 			    } else {
             $('.choice').eq(choice).addClass('btn-danger').css({'font-weight':'bold', 'border-color':'#f93939', 'color':'red'});
             }}
-            quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreOpponent + " : {{ opponent }}";
+            quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
             document.getElementById("scoreboard").innerHTML = quiztitle;
             currentquestion++;
 			if(currentquestion == quiz.length){
@@ -218,7 +222,7 @@ quiz = shuffle(quiz);
 			//add pager and questions
 			if(typeof quiz !== "undefined" && $.type(quiz) === "array"){
 				//add pager
-				$(document.createElement('p')).addClass('pager').attr('id','pager').text('Question 1 of' + quiz.length).appendTo('#frame');
+				$(document.createElement('p')).addClass('pager').attr('id','pager').text('Question 1 of ' + quiz.length).appendTo('#frame');
 				//add first question
 				$(document.createElement('h3')).addClass('question').attr('id', 'question').text(quiz[0]['question']).appendTo('#frame');
 				

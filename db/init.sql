@@ -28,7 +28,8 @@ CREATE TABLE game (
   score_1 INT,
   score_2 INT,
   player_1 VARCHAR(200),
-  player_2 VARCHAR(200)
+  player_2 VARCHAR(200),
+  mix_id INT
 );
 
 INSERT INTO user
