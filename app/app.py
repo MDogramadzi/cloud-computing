@@ -41,8 +41,14 @@ def get_users_with_username(name):
 
 from collections import defaultdict
 def get_questions_for_quiz():
+    mix_id = 0
+    try:
+        mix_id = session['mix_id']
+        print("MIX ID SET TO ", mix_id)
+    except KeyError:
+        mix_id = random.randint(0,1)
     con, cur = get_connection()
-    sql = "SELECT title, content, correct FROM question RIGHT JOIN answer ON question.qid=answer.question_id LIMIT 20"
+    sql = "SELECT title, content, correct FROM question RIGHT JOIN answer ON question.qid=answer.question_id LIMIT 40"
     cur.execute(sql)
     results = cur.fetchall()  
     d = defaultdict(list)
@@ -60,6 +66,10 @@ def get_questions_for_quiz():
                 d2["correct"] = x[0]
         d2["choices"] = all_choices
         all_results.append(d2)
+    if mix_id == 0:
+        all_results = all_results[:5]
+    else:
+        all_results = all_results[5:]
     kill_connection(con, cur)
     return json.dumps(all_results)
 
