@@ -110,7 +110,6 @@ def index() -> str:
             if check_game_created(request.form["player_name"]) is True:
                 return "Found Match"
             status = find_opponent(request.form["player_name"])
-            print(status)
             return status
                 
     else:
@@ -144,6 +143,7 @@ def find_opponent(player_name):
             mix_id = random.randint(0,1)
             session['mix_id'] = mix_id
             session['opponent'] = opponent
+            session['created'] = True
             players = (opponent, player_name, mix_id)
             sql_game = "INSERT INTO game (score_1,score_2,player_1,player_2,mix_id) VALUES (0,0,%s,%s,%s)"
             cur.execute(sql_game, players)
@@ -153,7 +153,6 @@ def find_opponent(player_name):
 
 
 def check_game_created(player_name):
-    print("Check Game Created")
     con, cur = get_connection()
     sql_chck_game = "SELECT * FROM game WHERE player_1 = %s"
     player = (player_name,)
@@ -161,7 +160,9 @@ def check_game_created(player_name):
     results = cur.fetchall()
     kill_connection(con, cur)
     if len(results) != 0:
+        session['created'] = False
         session['opponent'] = results[0][3]
+        session['mix_id'] = results[0][4]
         return True
     else:
         return False
@@ -173,8 +174,41 @@ def game_ai():
     return render_template('game.html', username=session["username"], opponent="AI", quiz=quiz)
 
 
-@app.route('/game')
+@app.route('/game', methods = ['GET','POST'])
 def game():
+    # player 2 created the game
+    if request.method == "POST":
+        con, cur = get_connection()
+        if 'username' in request.form:
+            sql_check_scr = "SELECT * from game WHERE player_1 = %s AND player_2 = %s"
+            if session['created'] is False:
+                players = (request.form['username'], request.form['opponent'])
+                cur.execute(sql_check_scr, players)
+                results = cur.fetchall()
+                opp_score = results[0][0]
+                kill_connection(con, cur)
+                return str(opp_score)
+            else:
+                players = (request.form['opponent'], request.form['username'])
+                cur.execute(sql_check_scr, players)
+                results = cur.fetchall()
+                opp_score = results[0][1]
+                kill_connection(con, cur)
+                return str(opp_score)
+
+        if 'username_updt' in request.form:
+            score = (request.form["score"], request.form["username_updt"], request.form["opponent_updt"])
+            if session['created'] is False:
+                sql_updt_scr = "UPDATE game SET score_1 = %s WHERE player_1 = %s AND player_2 = %s"
+                cur.execute(sql_updt_scr, score)
+                con.commit()
+            else:
+                sql_updt_scr = "UPDATE game SET score_2 = %s WHERE player_1 = %s AND player_2 = %s"
+                cur.execute(sql_updt_scr, score)
+                con.commit()
+            kill_connection(con, cur)
+            return "Score updated"
+
     quiz = get_questions_for_quiz()
     return render_template('game.html', username=session["username"], opponent=session['opponent'], quiz=quiz)
 

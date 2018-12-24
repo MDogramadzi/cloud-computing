@@ -114,15 +114,25 @@ quiz.forEach(q => q.choices.scramble());
             answerAI = timeAI * correctAI;
             scoreAI = scoreAI + answerAI; }
             else {
-                // get score of opponent
-            }
+                    }            
 
             if (currentquestion != quiz.length){
+            console.log("process question function");
             if(quiz[currentquestion]['choices'][choice] == quiz[currentquestion]['correct']){
 				    $('.choice').eq(choice).addClass('btn-success').css({'font-weight':'bold', 'border-color':'#51a351', 'color':'green'});
                     if(i > 10){ i = 10;}
                     score = score + i;
                     // send the score to the table score is 
+                    console.log("UPDATING SCORE");
+                    $.ajax({
+                        type: 'post',
+                        data: {username_updt: "{{ username | safe }}",
+                               opponent_updt: "{{ opponent | safe }}",
+                               score: score},
+                        success: function(response){
+                            console.log(String(response))
+                        }
+                    });
                     correctQuestions++;
 			    } else {
             $('.choice').eq(choice).addClass('btn-danger').css({'font-weight':'bold', 'border-color':'#f93939', 'color':'red'});
@@ -132,10 +142,24 @@ quiz.forEach(q => q.choices.scramble());
 			if(currentquestion == quiz.length-1){
 					endQuiz();
 			} else if (currentquestion < quiz.length){
-                    if(i == 0){
-                        currentquestion++;
-                        nextQuestion();}
-                    else {console.log("waiting");}
+                if(i == 0){
+                    // get score of opponent
+                console.log("Asking for score");
+                $.ajax({
+                    type: 'post',
+                    data: {username: "{{ username | safe }}",
+                           opponent: "{{ opponent | safe }}"
+                           },
+                    success: function(response){
+                        console.log("Opponent's score is " + String(response))
+                        scoreAI = parseInt(response)
+                    }
+                });
+                    currentquestion++;
+                    nextQuestion();
+                }else {
+                    console.log("Waiting");
+                }
 			} else {
         console.log("You have reached THE END");
 			}
