@@ -146,11 +146,11 @@
         i++;
         if (i <= 20) {
           $('.progress-bar').css('width', 5*i + '%');
+          console.log("Finding Opponents");
           find_opponents();
         } else {
-          clearInterval(counterBack);
-          // route to game using AI
           window.location.href = "/game-ai";
+          clearInterval(counterBack);
         }
 
       }, 500);

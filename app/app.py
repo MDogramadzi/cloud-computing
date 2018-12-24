@@ -170,6 +170,12 @@ def check_game_created(player_name):
 
 @app.route('/game-ai')
 def game_ai():
+    con, cur = get_connection()
+    player = (session['username'],)
+    sql_updt_mat = "UPDATE matchmaking SET searching = FALSE WHERE username = %s"
+    cur.execute(sql_updt_mat, player)
+    con.commit()
+    kill_connection(con, cur)
     quiz = get_questions_for_quiz()
     return render_template('game.html', username=session["username"], opponent="AI", quiz=quiz)
 
