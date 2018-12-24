@@ -65,7 +65,6 @@ if (!("scramble" in Array.prototype)) {
 var quiz = {{ quiz | safe }};
 
 quiz.forEach(q => q.choices.scramble());
-//console.log(quiz[0].choices);
 		
 //quiz = shuffle(quiz);
 	    
@@ -108,38 +107,33 @@ quiz.forEach(q => q.choices.scramble());
          * After a selection is submitted, check if its the right answer and score
          */
         function processQuestion(choice){
-            if ("{{ opponent }}" == "AI"){
-            timeAI = Math.floor(Math.random() * 11);
-            correctAI = getRandom();
-            answerAI = timeAI * correctAI;
-            scoreAI = scoreAI + answerAI; }
-            else {
-                    }            
-
             if (currentquestion != quiz.length){
-            console.log("process question function");
-            if(quiz[currentquestion]['choices'][choice] == quiz[currentquestion]['correct']){
+                console.log("process question function");
+                if(quiz[currentquestion]['choices'][choice] == quiz[currentquestion]['correct']){
 				    $('.choice').eq(choice).addClass('btn-success').css({'font-weight':'bold', 'border-color':'#51a351', 'color':'green'});
                     if(i > 10){ i = 10;}
                     score = score + i;
-                    // send the score to the table score is 
-                    console.log("UPDATING SCORE");
-                    $.ajax({
-                        type: 'post',
-                        data: {username_updt: "{{ username | safe }}",
-                               opponent_updt: "{{ opponent | safe }}",
-                               score: score},
-                        success: function(response){
-                            console.log(String(response))
-                        }
-                    });
-                    correctQuestions++;
+                    // send the score to the table score is
+                    if ("{{ opponent }}" != "AI"){ 
+                        console.log("UPDATING SCORE");
+                        $.ajax({
+                            type: 'post',
+                            data: {username_updt: "{{ username | safe }}",
+                                opponent_updt: "{{ opponent | safe }}",
+                                score: score},
+                            success: function(response){
+                                console.log(String(response))
+                            }
+                        });}
+                correctQuestions++;
 			    } else {
-            $('.choice').eq(choice).addClass('btn-danger').css({'font-weight':'bold', 'border-color':'#f93939', 'color':'red'});
-            }}
+                    $('.choice').eq(choice).addClass('btn-danger').css({'font-weight':'bold', 'border-color':'#f93939', 'color':'red'});
+                    }
+            }
             quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
             document.getElementById("scoreboard").innerHTML = quiztitle;
 			if(currentquestion == quiz.length-1){
+                if ("{{ opponent }}" != "AI"){
                     $.ajax({
                         type: 'post',
                         data: {username: "{{ username | safe }}",
@@ -151,11 +145,23 @@ quiz.forEach(q => q.choices.scramble());
                             quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
                             document.getElementById("scoreboard").innerHTML = quiztitle;
                         }
-                    });
-					endQuiz();
+                    });}else {
+                    timeAI = Math.floor(Math.random() * 11);
+                    correctAI = getRandom();
+                    answerAI = timeAI * correctAI;
+                    scoreAI = scoreAI + answerAI;
+                    console.log("Time AI: " + timeAI);
+                    console.log("Random Correct: " + correctAI);
+                    console.log("AI Score is : " + scoreAI);
+                    quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
+                    document.getElementById("scoreboard").innerHTML = quiztitle;
+                    }
+                    if (i == 0){
+					endQuiz();}
 			} else if (currentquestion < quiz.length){
                 if(i == 0){
                     // get score of opponent
+                    if ("{{ opponent }}" != "AI"){
                 console.log("Asking for score");
                 $.ajax({
                     type: 'post',
@@ -168,8 +174,19 @@ quiz.forEach(q => q.choices.scramble());
                         quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
                         document.getElementById("scoreboard").innerHTML = quiztitle;
                     }
-                });
+                });} else{                 
+                    timeAI = Math.floor(Math.random() * 11);
+                    correctAI = getRandom();
+                    answerAI = timeAI * correctAI;
+                    scoreAI = scoreAI + answerAI;
+                    console.log("Time AI: " + timeAI);
+                    console.log("Random Correct: " + correctAI);
+                    console.log("AI Score is : " + scoreAI);
+                    quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
+                    document.getElementById("scoreboard").innerHTML = quiztitle;
+                    }
                     currentquestion++;
+                    $("#choice-block").css("pointer-events","auto");
                     nextQuestion();
                 }else {
                     console.log("Waiting");
@@ -187,6 +204,7 @@ quiz.forEach(q => q.choices.scramble());
                 picked = $(this).attr('data-index');
 				$('.choice').removeAttr('style').off('mouseout mouseover');
                 $(this).css({'font-weight':'bold'});
+                $("#choice-block").css("pointer-events","none");  
                 processQuestion(picked);
 			})
 		}
@@ -205,6 +223,7 @@ quiz.forEach(q => q.choices.scramble());
 			$('.rsform-block-submit').addClass('show');
 			$('#question').text("You got " + correctQuestions + " out of " + quiz.length + " correct.");
             $(document.createElement('h4')).addClass('score').text(Math.round(score)).insertAfter('#question');
+            if ("{{ opponent }}" != "AI"){
             $.ajax({
                 type: 'post',
                 data: {username_deact: "{{ username | safe }}",
@@ -213,7 +232,7 @@ quiz.forEach(q => q.choices.scramble());
                 success: function(response){
                     console.log(String(response));
                 }
-            });
+            });}
         
         }
         
@@ -243,11 +262,13 @@ quiz.forEach(q => q.choices.scramble());
                 }
         }
 
- /*       function getRandomInt(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }*/
+/* comment function randomWithProbability() {
+  var notRandomNumbers = [1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5 ,5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
+  var idx = Math.floor(Math.random() * notRandomNumbers.length);
+  return notRandomNumbers[idx];}
+  
+  
+  alert(randomWithProbability()); */
 
         function getRandom(){
             var num=Math.random();
@@ -334,7 +355,7 @@ quiz.forEach(q => q.choices.scramble());
     <div class="container">
     <div class="row">
     <div class="col-2">
-                <div id="barr" class="progress progress-bar-vertical" style="width: 30px; height: 87%;  min-height: 100px; display: flex; align-items: flex-end; margin-left: 100px; margin-top: 50px; float: left;">
+                <div id="barr" class="progress progress-bar-vertical" style="width: 30px; height: 87%;  min-height: 100px; display: flex; align-items: flex-end; margin-left: 55%; margin-top: 50px; float: left;">
                   <div id="progress_bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="height: 100%;  width: 100%; background-color: #7CFC00; -webkit-transition: height 0.6s ease; -o-transition: height 0.6s ease; transition: height 0.6s ease; ">
                   </div>
                 </div>
