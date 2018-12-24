@@ -94,6 +94,8 @@ def index() -> str:
 
         elif 'player_name' in request.form:
 
+            if check_game_created(request.form["player_name"]) is True:
+                return "Found Match"
             status = find_opponent(request.form["player_name"])
             print(status)
             return status
@@ -120,16 +122,31 @@ def find_opponent(player_name):
     else:
         if player_name in all_names and len(all_names) == 1:
             return "Already in Matchmaking Table Alone"
-        all_names = [x for x in all_names if x != player_name]
-        opponent = all_names[0]
-        players = (opponent, player_name)
-        sql_updt_mat = "UPDATE matchmaking SET searching = FALSE WHERE username = %s OR username = %s"
-        cur.execute(sql_updt_mat, players)
-        sql_game = "INSERT INTO game (score_1, score_2, player_1, player_2) VALUES (0,0,%s,%s)"
-        cur.execute(sql_game, players)
-        con.commit()
-        kill_connection(con, cur)
-        return "Found Match"
+        else:
+            all_names = [x for x in all_names if x != player_name]
+            opponent = all_names[0]
+            players = (opponent, player_name)
+            sql_updt_mat = "UPDATE matchmaking SET searching = FALSE WHERE username = %s OR username = %s"
+            cur.execute(sql_updt_mat, players)
+            sql_game = "INSERT INTO game (score_1, score_2, player_1, player_2) VALUES (0,0,%s,%s)"
+            cur.execute(sql_game, players)
+            con.commit()
+            kill_connection(con, cur)
+            return "Found Match"
+
+
+def check_game_created(player_name):
+    con, cur = get_connection()
+    sql_chck_game = "SELECT * FROM game WHERE player_1 = %s"
+    player = (player_name,)
+    cur.execute(sql_chck_game, player)
+    results = cur.fetchall()
+    kill_connection(con, cur)
+    if len(results) != 0:
+        return True
+    else:
+        return False
+
 
 
 
