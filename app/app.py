@@ -120,9 +120,9 @@ def find_opponent(player_name):
     else:
         if player_name in all_names and len(all_names) == 1:
             return "Already in Matchmaking Table Alone"
-        all_names.remove(player_name)
+        all_names = [x for x in all_names if x != player_name]
         opponent = all_names[0]
-        sql_game = "INSERT INTO game (score_1, score_2, player_1, player_2 VALUES (0,0,%s,%s)"
+        sql_game = "INSERT INTO game (score_1, score_2, player_1, player_2) VALUES (0,0,%s,%s)"
         players = (opponent, player_name)
         cur.execute(sql_game, players)
         con.commit()
