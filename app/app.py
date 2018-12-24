@@ -91,9 +91,39 @@ def index() -> str:
             else:
                 session['username'] = request.form['login_username']
                 return "User Already Exists"
- 
+
+        elif 'player_name' in request.form:
+
+            status = find_opponent(request.form["player_name"])
+            print(status)
+            return status
+                
     else:
         return app.send_static_file('index.html')
+
+
+def find_opponent(player_name):
+    con, cur = get_connection()
+    sql = "SELECT username FROM matchmaking WHERE searching = TRUE"
+    cur.execute(sql)
+    results = cur.fetchall()
+    all_names = []
+    for result in results:
+        all_names.append(result[0])
+    if len(all_names) == 0 and (player_name not in all_names):
+        sql_ins = "INSERT INTO matchmaking (username, searching) VALUES (%s, TRUE)"
+        user = (player_name,)
+        cur.execute(sql_ins, user)
+        con.commit()
+        kill_connection(con, cur)
+        return "Added to matchmaking table"
+    elif player_name in all_names:
+        kill_connection(con, cur)
+        return "Already added to matchmaking table"
+    else:
+        kill_connection(con, cur)
+        return "Match with the first entry in results"
+
 
 
 @app.route('/game-ai')

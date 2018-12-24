@@ -19,6 +19,11 @@ CREATE TABLE answer (
   FOREIGN KEY (question_id) REFERENCES question(qid)
 );
 
+CREATE TABLE matchmaking (
+  username VARCHAR(200),
+  searching BOOLEAN
+);
+
 INSERT INTO user
   (username)
 VALUES

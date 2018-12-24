@@ -147,6 +147,7 @@
         i++;
         if (i <= 5) {
           $('.progress-bar').css('width', 20*i + '%');
+          find_opponents();
         } else {
           clearInterval(counterBack);
           // route to game using AI
@@ -154,6 +155,20 @@
         }
 
       }, 1000);
+
+    }
+
+
+    function find_opponents()  {
+
+      console.log("Check server for opponents");
+      $.ajax({
+        type: 'post',
+        data: {player_name: document.getElementById("login_user_input").value},
+        success: function(response){
+          console.log(String(response))
+        }
+      });
 
     }
 
