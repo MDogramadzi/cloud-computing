@@ -115,6 +115,15 @@ quiz.forEach(q => q.choices.scramble());
             scoreAI = scoreAI + answerAI; }
             else {
                 // get score of opponent
+                $.ajax({
+                    type: 'post',
+                    data: {username: "{{ username | safe }}",
+                           opponent: "{{ opponent | safe }}"
+                           },
+                    success: function(response){
+                        scoreAI = Int(reponse)
+                    }
+                });
             }
 
             if (currentquestion != quiz.length){

@@ -144,6 +144,7 @@ def find_opponent(player_name):
             mix_id = random.randint(0,1)
             session['mix_id'] = mix_id
             session['opponent'] = opponent
+            session['created'] = True
             players = (opponent, player_name, mix_id)
             sql_game = "INSERT INTO game (score_1,score_2,player_1,player_2,mix_id) VALUES (0,0,%s,%s,%s)"
             cur.execute(sql_game, players)
@@ -161,6 +162,7 @@ def check_game_created(player_name):
     results = cur.fetchall()
     kill_connection(con, cur)
     if len(results) != 0:
+        session['created'] = False
         session['opponent'] = results[0][3]
         return True
     else:
@@ -175,6 +177,26 @@ def game_ai():
 
 @app.route('/game')
 def game():
+    # player 2 created the game
+    if request.method == "POST":
+        if 'username' in request.form:
+            con, cur = get_connection()
+            sql_check_scr = "SELECT * from game WHERE player_1 = %s AND player_2 = %s"
+            if session['created'] is False:
+                players = (request.form['username'], request.form['opponent'])
+                cur.execute(sql_check_scr, players)
+                results = cur.fetchall()
+                print(results)
+                kill_connection()
+                return 3
+            else:
+                players = (request.form['opponent'], request.form['username'])
+                cur.execute(sql_check_scr, players)
+                results = cur.fetchall()
+                print(results)
+                kill_connection()
+                return 3
+
     quiz = get_questions_for_quiz()
     return render_template('game.html', username=session["username"], opponent=session['opponent'], quiz=quiz)
 
