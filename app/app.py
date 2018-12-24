@@ -129,12 +129,18 @@ def find_opponent(player_name):
         cur.execute(sql_game, players)
         con.commit()
         kill_connection(con, cur)
-        return "Match with the first entry in results"
+        return "Found Match"
 
 
 
 @app.route('/game-ai')
 def game_ai():
+    quiz = get_questions_for_quiz()
+    return render_template('game.html', username=session["username"], opponent="AI", quiz=quiz)
+
+
+@app.route('/game')
+def game():
     quiz = get_questions_for_quiz()
     return render_template('game.html', username=session["username"], opponent="AI", quiz=quiz)
 
