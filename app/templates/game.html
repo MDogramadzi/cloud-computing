@@ -105,7 +105,8 @@ quiz = shuffle(quiz);
          */
         function processQuestion(choice){
             timeAI = Math.floor(Math.random() * 11);
-            correctAI = getRandomInt(0,1);
+            correctAI = getRandom());
+            console.log(correctAI);
             answerAI = timeAI * correctAI;
             scoreAI = scoreAI + answerAI;
             if (currentquestion != quiz.length){
@@ -185,12 +186,17 @@ quiz = shuffle(quiz);
                 }
         }
 
-        function getRandomInt(min, max) {
+ /*       function getRandomInt(min, max) {
             min = Math.ceil(min);
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
+        }*/
 
+        function getRandom(){
+            var num=Math.random();
+            if(num < 0.3) return 0;  //probability 0.3
+            else return 1;  //probability 0.7
+            }
 
         /**
          * Create all of the elements for the quiz
