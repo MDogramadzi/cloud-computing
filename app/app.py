@@ -181,14 +181,14 @@ def game():
         con, cur = get_connection()
         if 'username' in request.form:
             sql_check_scr = "SELECT * from game WHERE player_1 = %s AND player_2 = %s AND active = TRUE"
-            if session['created'] is False:
+            if session['created'] is False:  # player 1
                 players = (request.form['username'], request.form['opponent'])
                 cur.execute(sql_check_scr, players)
                 results = cur.fetchall()
                 opp_score = results[0][1]
                 kill_connection(con, cur)
                 return str(opp_score)
-            else:
+            else:  # player 2
                 players = (request.form['opponent'], request.form['username'])
                 cur.execute(sql_check_scr, players)
                 results = cur.fetchall()
@@ -198,11 +198,11 @@ def game():
 
         if 'username_updt' in request.form:
             score = (request.form["score"], request.form["username_updt"], request.form["opponent_updt"])
-            if session['created'] is False:
+            if session['created'] is False:  # player 1
                 sql_updt_scr = "UPDATE game SET score_1 = %s WHERE player_1 = %s AND player_2 = %s AND active = TRUE"
                 cur.execute(sql_updt_scr, score)
                 con.commit()
-            else:
+            else:  # player 2
                 sql_updt_scr = "UPDATE game SET score_2 = %s WHERE player_2 = %s AND player_1 = %s AND active = TRUE"
                 cur.execute(sql_updt_scr, score)
                 con.commit()
