@@ -178,25 +178,34 @@ def game_ai():
 def game():
     # player 2 created the game
     if request.method == "POST":
+        con, cur = get_connection()
         if 'username' in request.form:
-            con, cur = get_connection()
             sql_check_scr = "SELECT * from game WHERE player_1 = %s AND player_2 = %s"
             if session['created'] is False:
                 players = (request.form['username'], request.form['opponent'])
                 cur.execute(sql_check_scr, players)
                 results = cur.fetchall()
-                print(results)
-                sys.stdout.flush()
+                opp_score = results[0][0]
                 kill_connection(con, cur)
-                return ""
+                return str(opp_score)
             else:
                 players = (request.form['opponent'], request.form['username'])
                 cur.execute(sql_check_scr, players)
                 results = cur.fetchall()
-                print(results)
-                sys.stdout.flush()
+                opp_score = results[0][1]
                 kill_connection(con, cur)
-                return ""
+                return str(opp_score)
+
+        if 'username_updt' in request.form:
+            score = (request.form["score"], request.form["username_updt"], request.form["opponent_updt"])
+            if session['created'] is False:
+                sql_updt_scr = "UPDATE game SET score_1 = %s WHERE player_1 = %s AND player_2 = %s"
+                cur.execute(sql_updt_scr, score)
+            else:
+                sql_updt_scr = "UPDATE game SET score_2 = %s WHERE player_1 = %s AND player_2 = %s"
+                cur.execute(sql_updt_scr, score)
+            kill_connection(con, cur)
+            return "Score updated"
 
     quiz = get_questions_for_quiz()
     return render_template('game.html', username=session["username"], opponent=session['opponent'], quiz=quiz)
