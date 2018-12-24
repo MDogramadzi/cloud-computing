@@ -129,11 +129,13 @@ quiz.forEach(q => q.choices.scramble());
             }}
             quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
             document.getElementById("scoreboard").innerHTML = quiztitle;
-            currentquestion++;
-			if(currentquestion == quiz.length){
+			if(currentquestion == quiz.length-1){
 					endQuiz();
 			} else if (currentquestion < quiz.length){
-                    nextQuestion();
+                    if(i == 0){
+                        currentquestion++;
+                        nextQuestion();}
+                    else {console.log("waiting");}
 			} else {
         console.log("You have reached THE END");
 			}
