@@ -201,9 +201,11 @@ def game():
             if session['created'] is False:
                 sql_updt_scr = "UPDATE game SET score_1 = %s WHERE player_1 = %s AND player_2 = %s"
                 cur.execute(sql_updt_scr, score)
+                con.commit()
             else:
                 sql_updt_scr = "UPDATE game SET score_2 = %s WHERE player_1 = %s AND player_2 = %s"
                 cur.execute(sql_updt_scr, score)
+                con.commit()
             kill_connection(con, cur)
             return "Score updated"
 
