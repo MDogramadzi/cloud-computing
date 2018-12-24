@@ -185,14 +185,14 @@ def game():
                 players = (request.form['username'], request.form['opponent'])
                 cur.execute(sql_check_scr, players)
                 results = cur.fetchall()
-                opp_score = results[0][0]
+                opp_score = results[0][1]
                 kill_connection(con, cur)
                 return str(opp_score)
             else:
                 players = (request.form['opponent'], request.form['username'])
                 cur.execute(sql_check_scr, players)
                 results = cur.fetchall()
-                opp_score = results[0][1]
+                opp_score = results[0][0]
                 kill_connection(con, cur)
                 return str(opp_score)
 
@@ -203,7 +203,7 @@ def game():
                 cur.execute(sql_updt_scr, score)
                 con.commit()
             else:
-                sql_updt_scr = "UPDATE game SET score_2 = %s WHERE player_1 = %s AND player_2 = %s"
+                sql_updt_scr = "UPDATE game SET score_2 = %s WHERE player_2 = %s AND player_1 = %s"
                 cur.execute(sql_updt_scr, score)
                 con.commit()
             kill_connection(con, cur)

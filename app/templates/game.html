@@ -153,6 +153,8 @@ quiz.forEach(q => q.choices.scramble());
                     success: function(response){
                         console.log("Opponent's score is " + String(response))
                         scoreAI = parseInt(response)
+                        quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
+                        document.getElementById("scoreboard").innerHTML = quiztitle;
                     }
                 });
                     currentquestion++;
