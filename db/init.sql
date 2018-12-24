@@ -29,7 +29,8 @@ CREATE TABLE game (
   score_2 INT,
   player_1 VARCHAR(200),
   player_2 VARCHAR(200),
-  mix_id INT
+  mix_id INT,
+  active BOOLEAN
 );
 
 INSERT INTO user
