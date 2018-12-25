@@ -233,15 +233,28 @@ quiz.forEach(q => q.choices.scramble());
 			$('#question').text("You got " + correctQuestions + " out of " + quiz.length + " correct.");
             $(document.createElement('h4')).addClass('score').text(Math.round(score)).insertAfter('#question');
             if ("{{ opponent }}" != "AI"){
-            $.ajax({
-                type: 'post',
-                data: {username_deact: "{{ username | safe }}",
-                       opponent_deact: "{{ opponent | safe }}"
-                    },
-                success: function(response){
-                    console.log(String(response));
+                
+                var result = "";
+                if (score > scoreAI)  {
+                    result = "win";
                 }
-            });}
+                else if (score == scoreAI)  {
+                    result = "draw";
+                }
+                else  {
+                    result = "loss";
+                }
+                $.ajax({
+                    type: 'post',
+                    data: {username_deact: "{{ username | safe }}",
+                        opponent_deact: "{{ opponent | safe }}",
+                        result: result
+                        },
+                    success: function(response){
+                        console.log(String(response));
+                    }
+                });
+            }
         
         }
         

@@ -4,6 +4,7 @@ use quiz;
 CREATE TABLE user (
   username VARCHAR(200),
   wins INT,
+  draws INT,
   losses INT
 );
 
@@ -36,10 +37,10 @@ CREATE TABLE game (
 );
 
 INSERT INTO user
-  (username, wins, losses)
+  (username, wins, draws, losses)
 VALUES
-  ("Marko", 1, 1),
-  ("Goce", 2, 0);
+  ("Marko", 0, 0, 0),
+  ("Goce", 0, 0, 0);
 
 INSERT INTO question
   (qid, title)

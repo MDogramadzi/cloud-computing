@@ -46,7 +46,7 @@
         var leaderboard = [];
         // username, wins, losses
         {% for user in leaderboard %}
-          leaderboard.push(["{{ user[0] | safe }}", parseInt("{{ user[1] }}"), "{{ user[2] }}"])
+          leaderboard.push(["{{ user[0] | safe }}", parseInt("{{ user[1] }}"), "{{ user[2] }}", "{{ user[3] }}"])
         {% endfor %}
 
         leaderboard = leaderboard.sort(Comparator);
@@ -64,7 +64,8 @@
         var heading = [];
         heading[0] = "Username";
         heading[1] = "Wins";
-        heading[2] = "Losses";
+        heading[2] = "Draws";
+        heading[3] = "Losses";
 
         var tr_head = document.createElement('TR');
         tableBody.appendChild(tr_head);

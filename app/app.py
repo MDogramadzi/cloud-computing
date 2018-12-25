@@ -216,6 +216,7 @@ def game():
             return "Score updated"
 
         if 'username_deact' in request.form:
+            update_leaderboard(request.form['username_deact'], request.form['result'])
             players = (request.form['username_deact'], request.form['opponent_deact'])
             sql_deact = "UPDATE game SET active = FALSE WHERE player_1 = %s AND player_2 = %s"
             cur.execute(sql_deact, players)
@@ -225,6 +226,21 @@ def game():
 
     quiz = get_questions_for_quiz()
     return render_template('game.html', username=session["username"], opponent=session['opponent'], quiz=quiz)
+
+
+def update_leaderboard(username, result):
+    con, cur = get_connection()
+    sql_lead = ""
+    if result == "win":
+        sql_lead = "UPDATE user SET wins = wins + 1 WHERE username = %s"
+    elif result == "draw":
+        sql_lead = "UPDATE user SET draws = draws + 1 WHERE username = %s"
+    else:
+        sql_lead = "UPDATE user SET losses = losses + 1 WHERE username = %s"
+    params = (username,)
+    cur.execute(sql_lead, params)
+    con.commit()
+    kill_connection(con, cur)
 
 
 @app.route('/leaderboard')
