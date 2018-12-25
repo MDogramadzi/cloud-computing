@@ -32,7 +32,7 @@ def kill_connection(connection, cursor):
 def get_users_with_username(name):
 
     con, cur = get_connection()
-    sql = "SELECT * FROM user WHERE username = %s"
+    sql = "SELECT username FROM user WHERE username = %s"
     user = (name,)
     cur.execute(sql, user)
     results = cur.fetchall()
@@ -85,7 +85,7 @@ def index() -> str:
 
             if len(results) == 0:
                 # user does not exist, so add them
-                insrt_sql = "INSERT INTO user (username) VALUES (%s)"
+                insrt_sql = "INSERT INTO user (username, wins, losses) VALUES (%s, 0, 0)"
                 con, cur = get_connection()
                 user = (request.form["new_username"],)
                 cur.execute(insrt_sql, user)
@@ -227,9 +227,9 @@ def game():
     return render_template('game.html', username=session["username"], opponent=session['opponent'], quiz=quiz)
 
 
-@app.route('/summary')
+@app.route('/leaderboard')
 def summary():
-    return render_template('summary.html')
+    return render_template('leaderboard.html')
 	
 
 if __name__ == '__main__':

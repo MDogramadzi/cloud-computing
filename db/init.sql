@@ -2,7 +2,9 @@ CREATE DATABASE quiz;
 use quiz;
 
 CREATE TABLE user (
-  username VARCHAR(200)
+  username VARCHAR(200),
+  wins INT,
+  losses INT
 );
 
 CREATE TABLE question (
@@ -34,10 +36,10 @@ CREATE TABLE game (
 );
 
 INSERT INTO user
-  (username)
+  (username, wins, losses)
 VALUES
-  ("Marko"),
-  ("Goce");
+  ("Marko", 0, 0),
+  ("Goce", 0, 0);
 
 INSERT INTO question
   (qid, title)
