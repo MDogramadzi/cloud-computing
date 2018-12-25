@@ -35,13 +35,21 @@
 
   <script>
 
+      function Comparator(a, b) {
+        if (a[1] > b[1]) return -1;
+        if (a[1] < b[1]) return 1;
+        return 0;
+      }
+
       function draw_leaderboard()  {
         
         var leaderboard = [];
         // username, wins, losses
         {% for user in leaderboard %}
-          leaderboard.push(["{{ user[0] | safe }}", "{{ user[1] }}", "{{ user[2] }}"])
+          leaderboard.push(["{{ user[0] | safe }}", parseInt("{{ user[1] }}"), "{{ user[2] }}"])
         {% endfor %}
+
+        leaderboard = leaderboard.sort(Comparator);
 
         var myTableDiv = document.getElementById("table_window");
         var table = document.createElement('TABLE');
