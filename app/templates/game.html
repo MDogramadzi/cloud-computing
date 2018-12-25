@@ -244,16 +244,18 @@ quiz.forEach(q => q.choices.scramble());
                 else  {
                     result = "loss";
                 }
-                $.ajax({
-                    type: 'post',
-                    data: {username_deact: "{{ username | safe }}",
-                        opponent_deact: "{{ opponent | safe }}",
-                        result: result
-                        },
-                    success: function(response){
-                        console.log(String(response));
-                    }
-                });
+                setTimeout(function() {
+                    $.ajax({
+                        type: 'post',
+                        data: {username_deact: "{{ username | safe }}",
+                            opponent_deact: "{{ opponent | safe }}",
+                            result: result
+                            },
+                        success: function(response){
+                            console.log(String(response));
+                        }
+                    });
+                }, 1000);  // delay this so other game has chance to read final score
             }
         
         }
