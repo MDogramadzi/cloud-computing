@@ -38,8 +38,8 @@ CREATE TABLE game (
 INSERT INTO user
   (username, wins, losses)
 VALUES
-  ("Marko", 0, 0),
-  ("Goce", 0, 0);
+  ("Marko", 1, 1),
+  ("Goce", 2, 0);
 
 INSERT INTO question
   (qid, title)

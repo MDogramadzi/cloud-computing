@@ -26,7 +26,7 @@
         <div class="card-header">
           <h3>Leaderboard</h3>
         </div>
-        <div class="card-body">
+        <div id="table_window" class="card-body">
             
         </div>
     </div>
@@ -35,9 +35,54 @@
 
   <script>
 
-      function play_again()  {
-        // add user to matchmaking queue
+      function draw_leaderboard()  {
+        
+        var leaderboard = [];
+        // username, wins, losses
+        {% for user in leaderboard %}
+          leaderboard.push(["{{ user[0] | safe }}", "{{ user[1] }}", "{{ user[2] }}"])
+        {% endfor %}
+
+        var myTableDiv = document.getElementById("table_window");
+        var table = document.createElement('TABLE');
+        table.classList.add('table');
+        myTableDiv.style.margin = '0 auto';
+        myTableDiv.style.overflow = 'auto';
+        var tableBody = document.createElement('TBODY');
+
+        table.cellPadding = '10';
+        table.appendChild(tableBody);
+
+        var heading = [];
+        heading[0] = "Username";
+        heading[1] = "Wins";
+        heading[2] = "Losses";
+
+        var tr_head = document.createElement('TR');
+        tableBody.appendChild(tr_head);
+        for (i = 0; i < heading.length; i++) {
+            var th = document.createElement('TH');
+            th.classList.add("text-center");
+            th.appendChild(document.createTextNode(heading[i]));
+            tr_head.appendChild(th);
+        }
+
+        for (var i = 0; i < leaderboard.length; i++) {
+          var tr = document.createElement('TR');
+          for (var j = 0; j < leaderboard[i].length; j++) {
+            var td = document.createElement('TD');
+            td.appendChild(document.createTextNode(leaderboard[i][j]));
+            tr.appendChild(td);
+          }
+          tableBody.appendChild(tr);
+        }
+
+
+        myTableDiv.appendChild(table)
+
       }
+
+      window.onload = draw_leaderboard;
 
   </script>
 

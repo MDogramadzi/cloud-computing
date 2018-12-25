@@ -228,8 +228,13 @@ def game():
 
 
 @app.route('/leaderboard')
-def summary():
-    return render_template('leaderboard.html')
+def leaderboard():
+    con, cur = get_connection()
+    sql_lead = "SELECT * from user"
+    cur.execute(sql_lead)
+    results = cur.fetchall()
+    kill_connection(con, cur)
+    return render_template('leaderboard.html', leaderboard=results)
 	
 
 if __name__ == '__main__':
