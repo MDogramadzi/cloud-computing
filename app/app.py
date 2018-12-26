@@ -5,6 +5,7 @@ import json
 import sys
 import random
 
+
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = '45259547-5106-4f31-84b4-fa33ac37c73e'
 app.debug = True
@@ -118,14 +119,15 @@ def index() -> str:
 
 def find_opponent(player_name):
     con, cur = get_connection()
-    sql = "SELECT username FROM matchmaking WHERE searching = TRUE"
+    sql = "SELECT username FROM matchmaking WHERE searching = TRUE AND created > NOW() - INTERVAL 10 SECOND"
     cur.execute(sql)
     results = cur.fetchall()
+    print(results)
     all_names = []
     for result in results:
         all_names.append(result[0])
     if len(all_names) == 0 and (player_name not in all_names):
-        sql_ins = "INSERT INTO matchmaking (username, searching) VALUES (%s, TRUE)"
+        sql_ins = "INSERT INTO matchmaking (username, searching, created) VALUES (%s, TRUE, NOW())"
         user = (player_name,)
         cur.execute(sql_ins, user)
         con.commit()

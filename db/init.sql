@@ -24,7 +24,8 @@ CREATE TABLE answer (
 
 CREATE TABLE matchmaking (
   username VARCHAR(200),
-  searching BOOLEAN
+  searching BOOLEAN,
+  created DATETIME
 );
 
 CREATE TABLE game (
