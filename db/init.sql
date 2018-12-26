@@ -34,7 +34,8 @@ CREATE TABLE game (
   player_1 VARCHAR(200),
   player_2 VARCHAR(200),
   mix_id INT,
-  active BOOLEAN
+  active BOOLEAN,
+  created DATETIME
 );
 
 INSERT INTO user

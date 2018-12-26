@@ -147,7 +147,7 @@ def find_opponent(player_name):
             session['opponent'] = opponent
             session['created'] = True
             players = (opponent, player_name, mix_id)
-            sql_game = "INSERT INTO game (score_1,score_2,player_1,player_2,mix_id,active) VALUES (0,0,%s,%s,%s,TRUE)"
+            sql_game = "INSERT INTO game (score_1,score_2,player_1,player_2,mix_id,active,created) VALUES (0,0,%s,%s,%s,TRUE,NOW())"
             cur.execute(sql_game, players)
             con.commit()
             kill_connection(con, cur)
@@ -156,7 +156,7 @@ def find_opponent(player_name):
 
 def check_game_created(player_name):
     con, cur = get_connection()
-    sql_chck_game = "SELECT * FROM game WHERE player_1 = %s AND active = TRUE"
+    sql_chck_game = "SELECT * FROM game WHERE player_1 = %s AND active = TRUE AND created > NOW() - INTERVAL 2 MINUTE"
     player = (player_name,)
     cur.execute(sql_chck_game, player)
     results = cur.fetchall()
@@ -188,7 +188,7 @@ def game():
     if request.method == "POST":
         con, cur = get_connection()
         if 'username' in request.form:
-            sql_check_scr = "SELECT * from game WHERE player_1 = %s AND player_2 = %s AND active = TRUE"
+            sql_check_scr = "SELECT * from game WHERE player_1 = %s AND player_2 = %s AND active = TRUE AND created > NOW() - INTERVAL 2 MINUTE"
             if session['created'] is False:  # player 1
                 players = (request.form['username'], request.form['opponent'])
                 cur.execute(sql_check_scr, players)
@@ -207,11 +207,11 @@ def game():
         if 'username_updt' in request.form:
             score = (request.form["score"], request.form["username_updt"], request.form["opponent_updt"])
             if session['created'] is False:  # player 1
-                sql_updt_scr = "UPDATE game SET score_1 = %s WHERE player_1 = %s AND player_2 = %s AND active = TRUE"
+                sql_updt_scr = "UPDATE game SET score_1 = %s WHERE player_1 = %s AND player_2 = %s AND active = TRUE AND created > NOW() - INTERVAL 2 MINUTE"
                 cur.execute(sql_updt_scr, score)
                 con.commit()
             else:  # player 2
-                sql_updt_scr = "UPDATE game SET score_2 = %s WHERE player_2 = %s AND player_1 = %s AND active = TRUE"
+                sql_updt_scr = "UPDATE game SET score_2 = %s WHERE player_2 = %s AND player_1 = %s AND active = TRUE AND created > NOW() - INTERVAL 2 MINUTE"
                 cur.execute(sql_updt_scr, score)
                 con.commit()
             kill_connection(con, cur)
