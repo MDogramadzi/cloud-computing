@@ -13,9 +13,8 @@ app = Flask(__name__, static_url_path='/static')
 app.secret_key = '45259547-5106-4f31-84b4-fa33ac37c73e'
 app.debug = True
 
-app.config["MONGO_URI"] = "mongodb://localhost:27017/mongo"
+app.config["MONGO_URI"] = "mongodb://mongodb:27017/reach-engine"
 mongo = PyMongo(app)
-
 
 def get_connection():
     connection = mysql.connector.connect(**config)
@@ -78,11 +77,13 @@ def index() -> str:
         if 'new_username' in request.form:
 
             if request.form['new_username'] == "AI":
-                "User Already Exists"
+                return "User Already Exists"
 
-            results = get_users_with_username(request.form["new_username"])
+            user_found = mongo.db.users.find_one({"name": request.form["new_username"]})
 
-            if len(results) == 0:
+            return "User Already Exists"
+
+            if user_found:
                 # user does not exist, so add them
                 insrt_sql = "INSERT INTO user (username, wins, losses) VALUES (%s, 0, 0)"
                 con, cur = get_connection()
@@ -112,8 +113,6 @@ def index() -> str:
             return status
                 
     else:
-        online_users = mongo.db.myDummyCollection.find({"online": True})
-        print(online_users)
         sys.stdout.flush()
         return app.send_static_file('index.html')
 

@@ -1,10 +1,8 @@
 [
     {
-      "name": "Marko",
-      "online": true
+        "name": "Marko"
     },
     {
-      "name": "Goce",
-      "online": true
+        "name": "Goce"
     }
-  ]
+]
