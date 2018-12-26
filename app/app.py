@@ -16,26 +16,6 @@ app.debug = True
 app.config["MONGO_URI"] = "mongodb://mongodb:27017/reach-engine"
 mongo = PyMongo(app)
 
-def get_connection():
-    connection = mysql.connector.connect(**config)
-    cursor = connection.cursor()
-    return connection, cursor
-
-
-def kill_connection(connection, cursor):
-    cursor.close()
-    connection.close()
-
-
-def get_users_with_username(name):
-
-    con, cur = get_connection()
-    sql = "SELECT username FROM user WHERE username = %s"
-    user = (name,)
-    cur.execute(sql, user)
-    results = cur.fetchall()
-    kill_connection(con, cur)
-    return results
 
 from collections import defaultdict
 def get_questions_for_quiz():
@@ -81,16 +61,9 @@ def index() -> str:
 
             user_found = mongo.db.users.find_one({"name": request.form["new_username"]})
 
-            return "User Already Exists"
-
-            if user_found:
+            if user_found is False:
                 # user does not exist, so add them
-                insrt_sql = "INSERT INTO user (username, wins, losses) VALUES (%s, 0, 0)"
-                con, cur = get_connection()
-                user = (request.form["new_username"],)
-                cur.execute(insrt_sql, user)
-                con.commit()  # commit changes to db
-                kill_connection(con, cur)
+                mongo.db.users.insert({"name": request.form["new_username"]})
                 return "User Created Successfully"
             else:
                 # instance of user in database, they already exist
@@ -98,12 +71,12 @@ def index() -> str:
 
         elif 'login_username' in request.form:
 
-            results = get_users_with_username(request.form["login_username"])
-            if len(results) == 0:
-                return "User Does Not Exist"
-            else:
+            user_found = mongo.db.users.find_one({"name": request.form["login_username"]})
+            if user_found is True:
                 session['username'] = request.form['login_username']
                 return "User Already Exists"
+            else:
+                return "User Does Not Exist"
 
         elif 'player_name' in request.form:
 
