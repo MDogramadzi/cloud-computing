@@ -1,9 +1,10 @@
 from typing import List, Dict
 from flask import Flask, render_template, request, session
-import mysql.connector
+from flask_pymongo import PyMongo
 import json
 import sys
 import random
+import os
 
 # this is the nosql version of the app
 
@@ -12,13 +13,8 @@ app = Flask(__name__, static_url_path='/static')
 app.secret_key = '45259547-5106-4f31-84b4-fa33ac37c73e'
 app.debug = True
 
-config = {
-        'user': 'root',
-        'password': 'root',
-        'host': 'db',
-        'port': '3306',
-        'database': 'quiz'
-        }
+app.config["MONGO_URI"] = "mongodb://localhost:27017/mongo"
+mongo = PyMongo(app)
 
 
 def get_connection():
@@ -116,6 +112,9 @@ def index() -> str:
             return status
                 
     else:
+        online_users = mongo.db.myDummyCollection.find({"online": True})
+        print(online_users)
+        sys.stdout.flush()
         return app.send_static_file('index.html')
 
 

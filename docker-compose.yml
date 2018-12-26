@@ -1,19 +1,22 @@
 version: "2"
 services:
-    
+
+  mongodb:
+    container_name: mongo
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    command: --smallfiles
+
+  mongo-seed:
+    build: ./mongo-seed
+    links:
+      - mongodb
+
   app:
     build: ./app
     links:
-      - db
+      - mongodb
     ports:
       - "5000:5000"
     volumes: ['./app:/app']
-
-  db:
-    image: mysql:5.7
-    ports:
-      - "32000:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-    volumes:
-      - ./db:/docker-entrypoint-initdb.d/:ro
