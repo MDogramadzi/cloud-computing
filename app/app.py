@@ -5,6 +5,8 @@ import json
 import sys
 import random
 
+# this is the nosql version of the app
+
 
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = '45259547-5106-4f31-84b4-fa33ac37c73e'
