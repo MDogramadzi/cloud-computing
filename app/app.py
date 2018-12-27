@@ -48,38 +48,12 @@ def get_questions_for_quiz():
         d["correct"] = question["choices"][0]
         all_questions.append(d)
 
-    return json.dumps(all_questions)
-
-    mix_id = 0
-    try:
-        mix_id = session['mix_id']
-    except KeyError:
-        mix_id = random.randint(0,1)
-    con, cur = get_connection()
-    sql = "SELECT title, content, correct FROM question RIGHT JOIN answer ON question.qid=answer.question_id LIMIT 40"
-    cur.execute(sql)
-    results = cur.fetchall()  
-    d = defaultdict(list)
-    for k, *v in results:
-        d[k].append(v)
-    list(d.items())
-    all_results = []
-    for key in d:
-        d2 = defaultdict(list)
-        d2["question"] = key
-        all_choices = []
-        for x in d[key]:
-            all_choices.append(x[0])
-            if x[1] == 1:
-                d2["correct"] = x[0]
-        d2["choices"] = all_choices
-        all_results.append(d2)
     if mix_id == 0:
-        all_results = all_results[:5]
+        all_questions = all_questions[:5]
     else:
-        all_results = all_results[5:]
-    kill_connection(con, cur)
-    return json.dumps(all_results)
+        all_questions = all_questions[5:]
+
+    return json.dumps(all_questions)
 
 
 @app.route('/' , methods = ['GET','POST'])
@@ -181,30 +155,29 @@ def game():
         if 'username' in request.form:
             if session['created'] is False:  # player 1
 
-                game = games.find({"player_1": request.form['username'], "player_2": request.form['opponent']})
+                game = games.find_one({"player_1": request.form['username'], "player_2": request.form['opponent']})
                 opp_score = game["score_2"]
                 return str(opp_score)
 
             else:  # player 2
 
-                game = games.find({"player_1": request.form['opponent'], "player_2": request.form['username']})
+                game = games.find_one({"player_1": request.form['opponent'], "player_2": request.form['username']})
                 opp_score = game["score_1"]
                 return str(opp_score)
 
         if 'username_updt' in request.form:
-            score = (request.form["score"], request.form["username_updt"], request.form["opponent_updt"])
-            
+
             if session['created'] is False:  # player 1
 
                 query = { "player_1": request.form["username_updt"], "player_2": request.form["opponent_updt"] }
                 newvalues = { "$set": { "score_1": request.form["score"] } }
-                game.update_one(query, newvalues)
+                games.update_one(query, newvalues)
 
             else:  # player 2
 
                 query = { "player_1": request.form["opponent_updt"], "player_2": request.form["username_updt"] }
                 newvalues = { "$set": { "score_2": request.form["score"] } }
-                game.update_one(query, newvalues)
+                games.update_one(query, newvalues)
 
             return "Score updated"
 
@@ -226,13 +199,13 @@ def update_leaderboard(username, result):
     query = { "name": username }
     if result == "win":
         newvalues = { "$inc": { "wins": 1 } }
-        user.update_one(query, newvalues)
+        users.update_one(query, newvalues)
     elif result == "draw":
         newvalues = { "$inc": { "draws": 1 } }
-        user.update_one(query, newvalues)
+        users.update_one(query, newvalues)
     else:
         newvalues = { "$inc": { "losses": 1 } }
-        user.update_one(query, newvalues)
+        users.update_one(query, newvalues)
 
 
 @app.route('/leaderboard')
