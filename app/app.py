@@ -6,6 +6,7 @@ import sys
 import random
 import os
 import datetime
+from bson import ObjectId
 
 # this is the nosql version of the app
 
@@ -30,6 +31,25 @@ questions = mongo.db["questions"]  # should be the only table that needs seeding
 
 from collections import defaultdict
 def get_questions_for_quiz():
+
+    mix_id = 0
+    try:
+        mix_id = session['mix_id']
+    except KeyError:
+        mix_id = random.randint(0,1)
+
+    question_list = questions.find().limit(10)
+
+    all_questions = []
+    for question in question_list:
+        d = defaultdict(list)
+        d["question"] = question["title"]
+        d["choices"] = question["choices"]
+        d["correct"] = question["choices"][0]
+        all_questions.append(d)
+
+    return json.dumps(all_questions)
+
     mix_id = 0
     try:
         mix_id = session['mix_id']
@@ -71,9 +91,6 @@ def index() -> str:
                 return "User Already Exists"
 
             user_found = users.find_one({"name": request.form["new_username"]})
-
-            print(user_found)
-            sys.stdout.flush()
 
             if user_found is None: 
                 # user does not exist, so add them
@@ -127,7 +144,7 @@ def find_opponent(player_name):
         matchmaking.remove({"$or": [{"username": player_name}, {"username": opp["username"]}]})
         mix_id = random.randint(0,1)
         session['mix_id'] = mix_id
-        session['opponent'] = opponent
+        session['opponent'] = opp["username"]
         session['created'] = True
         games.insert_one({"score_1": 0, "score_2": 0, "player_1": opp["username"], 
                     "player_2": player_name, "mix_id": mix_id, "created": datetime.datetime.now()})
@@ -142,7 +159,7 @@ def check_game_created(player_name):
     if game is not None:
         session['created'] = False
         session['opponent'] = game["player_2"]
-        session['mix_id'] = results[0][4]
+        session['mix_id'] = game["mix_id"]
         return True
     else:
         return False
@@ -160,44 +177,44 @@ def game_ai():
 def game():
     # player 2 created the game
     if request.method == "POST":
-        con, cur = get_connection()
+
         if 'username' in request.form:
-            sql_check_scr = "SELECT * from game WHERE player_1 = %s AND player_2 = %s AND active = TRUE AND created > NOW() - INTERVAL 2 MINUTE"
             if session['created'] is False:  # player 1
-                players = (request.form['username'], request.form['opponent'])
-                cur.execute(sql_check_scr, players)
-                results = cur.fetchall()
-                opp_score = results[0][1]
-                kill_connection(con, cur)
+
+                game = games.find({"player_1": request.form['username'], "player_2": request.form['opponent']})
+                opp_score = game["score_2"]
                 return str(opp_score)
+
             else:  # player 2
-                players = (request.form['opponent'], request.form['username'])
-                cur.execute(sql_check_scr, players)
-                results = cur.fetchall()
-                opp_score = results[0][0]
-                kill_connection(con, cur)
+
+                game = games.find({"player_1": request.form['opponent'], "player_2": request.form['username']})
+                opp_score = game["score_1"]
                 return str(opp_score)
 
         if 'username_updt' in request.form:
             score = (request.form["score"], request.form["username_updt"], request.form["opponent_updt"])
+            
             if session['created'] is False:  # player 1
-                sql_updt_scr = "UPDATE game SET score_1 = %s WHERE player_1 = %s AND player_2 = %s AND active = TRUE AND created > NOW() - INTERVAL 2 MINUTE"
-                cur.execute(sql_updt_scr, score)
-                con.commit()
+
+                query = { "player_1": request.form["username_updt"], "player_2": request.form["opponent_updt"] }
+                newvalues = { "$set": { "score_1": request.form["score"] } }
+                game.update_one(query, newvalues)
+
             else:  # player 2
-                sql_updt_scr = "UPDATE game SET score_2 = %s WHERE player_2 = %s AND player_1 = %s AND active = TRUE AND created > NOW() - INTERVAL 2 MINUTE"
-                cur.execute(sql_updt_scr, score)
-                con.commit()
-            kill_connection(con, cur)
+
+                query = { "player_1": request.form["opponent_updt"], "player_2": request.form["username_updt"] }
+                newvalues = { "$set": { "score_2": request.form["score"] } }
+                game.update_one(query, newvalues)
+
             return "Score updated"
 
         if 'username_deact' in request.form:
+
+            games.remove({"player_1": request.form['username_deact']}, 
+                        {"player_2": request.form['opponent_deact']})
+
             update_leaderboard(request.form['username_deact'], request.form['result'])
-            players = (request.form['username_deact'], request.form['opponent_deact'])
-            sql_deact = "UPDATE game SET active = FALSE WHERE player_1 = %s AND player_2 = %s"
-            cur.execute(sql_deact, players)
-            con.commit()
-            kill_connection(con, cur)
+
             return "Deactivated Game"
 
     quiz = get_questions_for_quiz()
@@ -205,18 +222,17 @@ def game():
 
 
 def update_leaderboard(username, result):
-    con, cur = get_connection()
-    sql_lead = ""
+
+    query = { "name": username }
     if result == "win":
-        sql_lead = "UPDATE user SET wins = wins + 1 WHERE username = %s"
+        newvalues = { "$inc": { "wins": 1 } }
+        user.update_one(query, newvalues)
     elif result == "draw":
-        sql_lead = "UPDATE user SET draws = draws + 1 WHERE username = %s"
+        newvalues = { "$inc": { "draws": 1 } }
+        user.update_one(query, newvalues)
     else:
-        sql_lead = "UPDATE user SET losses = losses + 1 WHERE username = %s"
-    params = (username,)
-    cur.execute(sql_lead, params)
-    con.commit()
-    kill_connection(con, cur)
+        newvalues = { "$inc": { "losses": 1 } }
+        user.update_one(query, newvalues)
 
 
 @app.route('/leaderboard')
@@ -225,8 +241,6 @@ def leaderboard():
     results_arr = []
     for result in results:
         results_arr.append(result)
-    print(results_arr)
-    sys.stdout.flush()
     return render_template('leaderboard.html', leaderboard=results_arr)
 	
 

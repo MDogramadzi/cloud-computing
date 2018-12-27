@@ -1,14 +1,45 @@
 [
     {
-        "name": "Marko",
-        "wins": 0,
-        "draws": 0,
-        "losses": 0
+        "title": "Which of these is NOT a NOSQL Document Database?",
+        "choices": ["ZooKeeper", "MongoDB", "BaseX", "RethinkDB"]
     },
     {
-        "name": "Goce",
-        "wins": 0,
-        "draws": 0,
-        "losses": 0
+        "title": "Google App Engine is an example of which *aaS?",
+        "choices": ["Platform as a Service (PaaS)", "Software as a Service (SaaS)",
+            "Infrastructure as a Service (IaaS)", "Car as a Service (CaaS)"]
+    },
+    {
+        "title": "Which of these is an AWS example service from IaaS?",
+        "choices": ["EC2", "Elastic Beanstalk", "Amazon Prime", "Amazon Web Services"]
+    },
+    {
+        "title": "What is Hadoop named after?",
+        "choices": ["A stuffed yellow elephant", "A wooden blue elephant",
+            "An inflatable green elephant", "An actual hippo"]
+    },
+    {
+        "title": "Which of these is the open-source version of Pregel?",
+        "choices": ["Giraph", "Anzograph", "Datastax", "Amazon Neptune"]
+    },
+    {
+        "title": "Which of these scaling types involves decomposing by function?",
+        "choices": ["Y-Axis Scaling", "X-Axis Scaling", "Z-Axis Scaling","V-Axis Scaling"]
+    },
+    {
+        "title": "Where does the majority of power go in a modern data centre?",
+        "choices": ["CPUs", "Disks", "Cooling Overhead", "DRAM"]
+    },
+    {
+        "title": "Which of these best describes MapReduce?",
+        "choices": ["An Architecture", "An Algorithm", "A Programming Language", "A Database"]
+    },
+    {
+        "title": "Which of these is considered the most serious threat in Cloud Security?",
+        "choices": ["Data Breaches", "Account Hijacking", 
+            "Malicious Insiders", "Insecure Interfaces and APIs"]
+    },
+    {
+        "title": "Which of these IaC tools NOT open-source?",
+        "choices": ["Cloud-Formation", "Chef", "Ansible", "SaltStack"]
     }
 ]
