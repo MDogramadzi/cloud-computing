@@ -5,6 +5,7 @@ import json
 import sys
 import random
 import os
+import datetime
 
 # this is the nosql version of the app
 
@@ -15,6 +16,16 @@ app.debug = True
 
 app.config["MONGO_URI"] = "mongodb://mongodb:27017/reach-engine"
 mongo = PyMongo(app)
+
+
+# define the collections (tables), fine to do it here as they are only created
+# if they do not exist already
+
+users = mongo.db["users"]
+matchmaking = mongo.db["matchmaking"]
+games = mongo.db["games"]
+questions = mongo.db["questions"]  # should be the only table that needs seeding (init.json)
+
 
 
 from collections import defaultdict
@@ -59,11 +70,17 @@ def index() -> str:
             if request.form['new_username'] == "AI":
                 return "User Already Exists"
 
-            user_found = mongo.db.users.find_one({"name": request.form["new_username"]})
+            user_found = users.find_one({"name": request.form["new_username"]})
 
-            if user_found is False:
+            print(user_found)
+            sys.stdout.flush()
+
+            if user_found is None: 
                 # user does not exist, so add them
-                mongo.db.users.insert({"name": request.form["new_username"]})
+                users.insert_one({"name": request.form["new_username"],
+                                        "wins": 0,
+                                        "losses": 0,
+                                        "draws": 0})
                 return "User Created Successfully"
             else:
                 # instance of user in database, they already exist
@@ -71,8 +88,8 @@ def index() -> str:
 
         elif 'login_username' in request.form:
 
-            user_found = mongo.db.users.find_one({"name": request.form["login_username"]})
-            if user_found is True:
+            user_found = users.find_one({"name": request.form["login_username"]})
+            if user_found is not None:
                 session['username'] = request.form['login_username']
                 return "User Already Exists"
             else:
@@ -86,57 +103,45 @@ def index() -> str:
             return status
                 
     else:
-        sys.stdout.flush()
+
         return app.send_static_file('index.html')
 
 
 def find_opponent(player_name):
-    con, cur = get_connection()
-    sql = "SELECT username FROM matchmaking WHERE searching = TRUE AND created > NOW() - INTERVAL 10 SECOND"
-    cur.execute(sql)
-    results = cur.fetchall()
-    print(results)
-    all_names = []
-    for result in results:
-        all_names.append(result[0])
-    if len(all_names) == 0 and (player_name not in all_names):
-        sql_ins = "INSERT INTO matchmaking (username, searching, created) VALUES (%s, TRUE, NOW())"
-        user = (player_name,)
-        cur.execute(sql_ins, user)
-        con.commit()
-        kill_connection(con, cur)
+    
+    # check matchmaking table and find if anyone is searching, within reasonable time
+    min_time = datetime.datetime.now() - datetime.timedelta(seconds=10)
+    opp = matchmaking.find_one({"username": {"$ne": player_name}, "searching": True, "created": {"$gte": min_time}})
+    present = matchmaking.find_one({"username": player_name})
+
+    if opp is None and present is None:  # no opponents and not currently in matchmaking
+        matchmaking.insert_one({"username": player_name,
+                            "searching": True,
+                            "created": datetime.datetime.now()})
         return "Added to matchmaking table"
+    
+    elif opp is None and present is not None:  # no opponents + in matchmaking already
+        return "Already in Matchmaking Table Alone"
+
     else:
-        if player_name in all_names and len(all_names) == 1:
-            return "Already in Matchmaking Table Alone"
-        else:
-            all_names = [x for x in all_names if x != player_name]
-            opponent = all_names[0]
-            players = (opponent, player_name)
-            sql_updt_mat = "UPDATE matchmaking SET searching = FALSE WHERE username = %s OR username = %s"
-            cur.execute(sql_updt_mat, players)
-            mix_id = random.randint(0,1)
-            session['mix_id'] = mix_id
-            session['opponent'] = opponent
-            session['created'] = True
-            players = (opponent, player_name, mix_id)
-            sql_game = "INSERT INTO game (score_1,score_2,player_1,player_2,mix_id,active,created) VALUES (0,0,%s,%s,%s,TRUE,NOW())"
-            cur.execute(sql_game, players)
-            con.commit()
-            kill_connection(con, cur)
-            return "Found Match"
+        matchmaking.remove({"$or": [{"username": player_name}, {"username": opp["username"]}]})
+        mix_id = random.randint(0,1)
+        session['mix_id'] = mix_id
+        session['opponent'] = opponent
+        session['created'] = True
+        games.insert_one({"score_1": 0, "score_2": 0, "player_1": opp["username"], 
+                    "player_2": player_name, "mix_id": mix_id, "created": datetime.datetime.now()})
+
+        return "Found Match"
 
 
 def check_game_created(player_name):
-    con, cur = get_connection()
-    sql_chck_game = "SELECT * FROM game WHERE player_1 = %s AND active = TRUE AND created > NOW() - INTERVAL 2 MINUTE"
-    player = (player_name,)
-    cur.execute(sql_chck_game, player)
-    results = cur.fetchall()
-    kill_connection(con, cur)
-    if len(results) != 0:
+
+    game = games.find_one({"player_1": player_name})
+
+    if game is not None:
         session['created'] = False
-        session['opponent'] = results[0][3]
+        session['opponent'] = game["player_2"]
         session['mix_id'] = results[0][4]
         return True
     else:
@@ -145,12 +150,8 @@ def check_game_created(player_name):
 
 @app.route('/game-ai')
 def game_ai():
-    con, cur = get_connection()
-    player = (session['username'],)
-    sql_updt_mat = "UPDATE matchmaking SET searching = FALSE WHERE username = %s"
-    cur.execute(sql_updt_mat, player)
-    con.commit()
-    kill_connection(con, cur)
+
+    matchmaking.remove({"username": session['username']})
     quiz = get_questions_for_quiz()
     return render_template('game.html', username=session["username"], opponent="AI", quiz=quiz)
 
