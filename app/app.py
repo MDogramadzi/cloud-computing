@@ -221,12 +221,13 @@ def update_leaderboard(username, result):
 
 @app.route('/leaderboard')
 def leaderboard():
-    con, cur = get_connection()
-    sql_lead = "SELECT * from user"
-    cur.execute(sql_lead)
-    results = cur.fetchall()
-    kill_connection(con, cur)
-    return render_template('leaderboard.html', leaderboard=results)
+    results = users.find()
+    results_arr = []
+    for result in results:
+        results_arr.append(result)
+    print(results_arr)
+    sys.stdout.flush()
+    return render_template('leaderboard.html', leaderboard=results_arr)
 	
 
 if __name__ == '__main__':

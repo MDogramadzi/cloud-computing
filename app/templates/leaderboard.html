@@ -46,7 +46,7 @@
         var leaderboard = [];
         // username, wins, losses
         {% for user in leaderboard %}
-          leaderboard.push(["{{ user[0] | safe }}", parseInt("{{ user[1] }}"), "{{ user[2] }}", "{{ user[3] }}"])
+          leaderboard.push(["{{ user["name"] | safe }}", parseInt("{{ user["wins"] }}"), "{{ user["draws"] }}", "{{ user["losses"] }}"])
         {% endfor %}
 
         leaderboard = leaderboard.sort(Comparator);
