@@ -1,12 +1,8 @@
 #cloudbuild.yaml
 steps:
-- name: 'cd'
-  args: ['app']
-- name: 'gcr.io/cloud-builders/docker'
+
+- name: 'docker'
   args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/foobar:$COMMIT_SHA', '-t', 'gcr.io/$PROJECT_ID/foobar:latest', '.' ]
-  
-- name: 'cd'
-  args: ['..']
   
 - name: 'docker/compose:1.15.0'
   args: ['up', '-d']
