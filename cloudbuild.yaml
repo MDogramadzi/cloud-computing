@@ -6,4 +6,7 @@ steps:
 # with the local builder.
 - name: 'docker/compose:1.15.0'
   args: ['up', '-d']
-images: ['gcr.io/$PROJECT_ID/qloud-docker-compose:latest']
+images:
+- 'us.gcr.io/$PROJECT_ID/foobar:$COMMIT_SHA'
+- 'us.gcr.io/$PROJECT_ID/foobar:latest'
+timeout: 3600s
