@@ -9,4 +9,3 @@ steps:
 # with the local builder.
 - name: 'docker/compose:1.15.0'
   args: ['up', '-d']
-  args: ['tag', 'workspace_app:latest', 'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA']
