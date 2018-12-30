@@ -1,7 +1,7 @@
 #cloudbuild.yaml
 steps:
 - name: 'docker/compose:1.16.0'
-  args: ['up', '-d']
+  args: ['build']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['tag', 'workspace_app:latest', 'gcr.io/$PROJECT_ID/qloud']
 images: ['gcr.io/$PROJECT_ID/qloud']
