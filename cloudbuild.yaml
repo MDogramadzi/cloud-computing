@@ -1,7 +1,12 @@
 #cloudbuild.yaml
 steps:
+
+- name: 'docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/foobar:$COMMIT_SHA', '-t', 'gcr.io/$PROJECT_ID/foobar:latest', 'app' ]
+  
 - name: 'docker/compose:1.15.0'
   args: ['up', '-d']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['tag', 'workspace_app:latest', 'gcr.io/$PROJECT_ID/qloud:$COMMIT_SHA']
-images: ['gcr.io/$PROJECT_ID/qloud:$COMMIT_SHA']
+images:
+- 'gcr.io/$PROJECT_ID/foobar:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/foobar:latest'
+timeout: 3600s
