@@ -235,18 +235,18 @@ quiz.forEach(q => q.choices.scramble());
 			$('.rsform-block-submit').addClass('show');
 			$('#question').text("You got " + correctQuestions + " out of " + quiz.length + " correct.");
             $(document.createElement('h4')).addClass('score').attr('id', 'scoreid').text(Math.round(score)).insertAfter('#question');    
-                var result = "";
-                if (score > scoreAI)  {
-                    result = "win";
-                }
-                else if (score == scoreAI)  {
-                    result = "draw";
-                }
-                else  {
-                    result = "loss";
-                }
                 if ("{{ opponent }}" != "AI"){
                     setTimeout(function() {
+                        var result = "";
+                        if (score > scoreAI)  {
+                            result = "win";
+                        }
+                        else if (score == scoreAI)  {
+                            result = "draw";
+                        }
+                        else  {
+                            result = "loss";
+                        }
                         $.ajax({
                             type: 'post',
                             data: {username_deact: "{{ username | safe }}",
