@@ -126,8 +126,8 @@ def find_opponent(player_name):
 
 
 def check_game_created(player_name):
-
-    game = games.find_one({"player_1": player_name})
+    min_time = datetime.datetime.now() - datetime.timedelta(minutes=1)
+    game = games.find_one({"player_1": player_name, "created": {"$gte": min_time}})
 
     if game is not None:
         session['created'] = False
