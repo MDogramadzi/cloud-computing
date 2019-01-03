@@ -259,9 +259,9 @@ quiz.forEach(q => q.choices.scramble());
                         });
                     }, 1000);  // delay this so other game has chance to read final score
                 }
-            if (result == "win"){
+            if (score > scoreAI){
                 $(document.createElement('h4')).addClass('outcome').attr('id', 'outcome').text("You " + result + "!").css("color", "green").insertAfter('#scoreid');}
-            else if (result == "loss"){
+            else if (score < scoreAI){
                 $(document.createElement('h4')).addClass('outcome').attr('id', 'outcome').text("You lose!").css("color", "red").insertAfter('#scoreid');}
             else{
                 $(document.createElement('h4')).addClass('outcome').attr('id', 'outcome').text("Draw!").css("color", "#F59F00").insertAfter('#scoreid');}
