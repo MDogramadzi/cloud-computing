@@ -26,24 +26,6 @@
     var scoreAI = 0;
     var answerAI = 0;
     var quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
-/**
-* Randomise the questions!
-
-function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-  return array;
-}
-*/
 
 // Scramble the answers every time	    
 if (!("scramble" in Array.prototype)) {
@@ -96,22 +78,42 @@ quiz.forEach(q => q.choices.scramble());
          */
 		function nextQuestion(){
             $('#explanation').empty();
-            i = 11; // might change when delay is applied
+            picked = 51;
+            i = 12; // might change when delay is applied
 			$('#question').text(quiz[currentquestion]['question']); /* here change with SQL question*/
 			$('#pager').text('Question ' + Number(currentquestion + 1) + ' of ' + quiz.length);
-			addChoices(quiz[currentquestion]['choices']);
+			//setTimeout(function() { addChoices(quiz[currentquestion]['choices']); }, 1000);
+            addChoices(quiz[currentquestion]['choices']);
+            //$("#choice-block").css("pointer-events","auto");
 			setupButtons();
+            jQuery(document).ready(function($){			
+				$('p.pager').each(function(){
+					var text = $(this).text().split(' ');
+					if(text.length < 2)
+						return;
+					
+					text[1] = '<span class="qnumber">'+text[1]+'</span>';
+					$(this).html(
+						text.join(' ')
+					);
+				});
+				
+			});
+
+
+
+
 			
         }
         /**
          * After a selection is submitted, check if its the right answer and score
          */
         function processQuestion(choice){
-                                console.log("picked is beg " + choice);
+
             if (currentquestion != quiz.length){
                 console.log("process question function");
                 if(quiz[currentquestion]['choices'][choice] == quiz[currentquestion]['correct']){
-				    $('.choice').eq(choice).addClass('btn-success').css({'font-weight':'bold', 'border-color':'#51a351', 'color':'green'});
+				    $('.choice').eq(choice).addClass('btn-success').css({'font-weight':'bold', 'border-color':'#51a351', 'color':'white', 'background-color':'green', 'transition': 'background 1s ease-in-out'});
                     if(i > 10){ i = 10;}
                     score = score + i;
                     // send the score to the table score
@@ -128,7 +130,8 @@ quiz.forEach(q => q.choices.scramble());
                         });}
                 correctQuestions++;
 			    } else {
-                    $('.choice').eq(choice).addClass('btn-danger').css({'font-weight':'bold', 'border-color':'#f93939', 'color':'red'});
+                    $('.choice').eq(choice).addClass('btn-danger').css({'font-weight':'bold', 'border-color':'#f93939', 'color':'white', 'background-color':'red'}).fadeTo("slow", 0.5);
+                    $('.choice').filter(function() { return ($(this).text() === quiz[currentquestion]['correct']) }).addClass('btn-success').css({'font-weight':'bold', 'border-color':'#51a351', 'color':'green', 'transition': '1s ease-in-out'});
                     }
             }
 
@@ -163,7 +166,6 @@ quiz.forEach(q => q.choices.scramble());
                     console.log("AI Score is : " + scoreAI);
                     quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
                     document.getElementById("scoreboard").innerHTML = quiztitle;
-                    console.log("ENDQUIZ FUNction call")
 					endQuiz();}
 			} else if (currentquestion < quiz.length){
                 if(i == 0){
@@ -184,7 +186,8 @@ quiz.forEach(q => q.choices.scramble());
                         });
                     } else {   
                         console.log("Update score at each question");              
-                        timeAI = Math.floor(Math.random() * 11);
+                        timeAI = randomWithProbability();
+                        //timeAI = Math.floor(Math.random() * 11);
                         correctAI = getRandom();
                         answerAI = timeAI * correctAI;
                         scoreAI = scoreAI + answerAI;
@@ -195,7 +198,7 @@ quiz.forEach(q => q.choices.scramble());
                         document.getElementById("scoreboard").innerHTML = quiztitle;
                     }
                     currentquestion++;
-                    $("#choice-block").css("pointer-events","auto");
+                   // $("#choice-block").toggle();
                     nextQuestion();
                 }else {
                     console.log("Waiting");
@@ -231,9 +234,7 @@ quiz.forEach(q => q.choices.scramble());
             $('#question').css("margin-top", "10px");
 			$('.rsform-block-submit').addClass('show');
 			$('#question').text("You got " + correctQuestions + " out of " + quiz.length + " correct.");
-            $(document.createElement('h4')).addClass('score').text(Math.round(score)).insertAfter('#question');
-            if ("{{ opponent }}" != "AI"){
-                
+            $(document.createElement('h4')).addClass('score').attr('id', 'scoreid').text(Math.round(score)).insertAfter('#question');    
                 var result = "";
                 if (score > scoreAI)  {
                     result = "win";
@@ -244,19 +245,27 @@ quiz.forEach(q => q.choices.scramble());
                 else  {
                     result = "loss";
                 }
-                setTimeout(function() {
-                    $.ajax({
-                        type: 'post',
-                        data: {username_deact: "{{ username | safe }}",
-                            opponent_deact: "{{ opponent | safe }}",
-                            result: result
-                            },
-                        success: function(response){
-                            console.log(String(response));
-                        }
-                    });
-                }, 1000);  // delay this so other game has chance to read final score
-            }
+                if ("{{ opponent }}" != "AI"){
+                    setTimeout(function() {
+                        $.ajax({
+                            type: 'post',
+                            data: {username_deact: "{{ username | safe }}",
+                                opponent_deact: "{{ opponent | safe }}",
+                                result: result
+                                },
+                            success: function(response){
+                                console.log(String(response));
+                            }
+                        });
+                    }, 1000);  // delay this so other game has chance to read final score
+                }
+            if (result == "win"){
+                $(document.createElement('h4')).addClass('outcome').attr('id', 'outcome').text("You " + result + "!").css("color", "green").insertAfter('#scoreid');}
+            else if (result == "loss"){
+                $(document.createElement('h4')).addClass('outcome').attr('id', 'outcome').text("You lose!").css("color", "red").insertAfter('#scoreid');}
+            else{
+                $(document.createElement('h4')).addClass('outcome').attr('id', 'outcome').text("Draw!").css("color", "#F59F00").insertAfter('#scoreid');}
+            $("#outcome").fadeIn(3000);
         
         }
         
@@ -266,32 +275,33 @@ quiz.forEach(q => q.choices.scramble());
                 var counterBack = setInterval(function () {
                     $('#progress_bar').css("background-color", "#7CFC00");
                     if (start == 1){
-                    if (i > 0) {
-                        i--;
-                        $('#progress_bar').css('height', 10*i + '%');
-                        if (i <= 5 && i > 3){
-                            $('#progress_bar').css("background-color", "#FFD700");
-                        } else if (i <= 3){
-                            $('#progress_bar').css("background-color", "#FF0000");
-                        } 
-                    } else {
-                        clearInterval(counterBack);
-                        animate_progress_bar();
-                        processQuestion(4);
-                    }
-                }else {}
-                }, 1000);}else{
-
-                }
+                        if (i == 11 && !(picked >= 0 && picked < 4)) { $("#choice-block").css("pointer-events","auto"); }
+                        if (i > 0) {
+                            i--;
+                            //alert((i == 11 && !(picked >= 0 && picked < 4)));
+                            $('#progress_bar').css('height', 10*i + '%');
+                            if (i <= 5 && i > 3){
+                                $('#progress_bar').css("background-color", "#FFD700");
+                            } else if (i <= 3){
+                                $('#progress_bar').css("background-color", "#FF0000");
+                            } 
+                        } else {
+                            // setTimeout(function() {$("#choice-block").toggle();}, 1000);
+                            clearInterval(counterBack);
+                            animate_progress_bar();
+                            processQuestion(4);
+                            console.log("QUESTONNNNN");
+                        }
+                    } else {}
+                }, 1000);
+            } else {}
         }
 
-/* comment function randomWithProbability() {
-  var notRandomNumbers = [1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5 ,5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
-  var idx = Math.floor(Math.random() * notRandomNumbers.length);
-  return notRandomNumbers[idx];}
+    function randomWithProbability() {
+        var notRandomNumbers = [1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5 ,5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
+        var idx = Math.floor(Math.random() * notRandomNumbers.length);
+        return notRandomNumbers[idx];}
   
-  
-  alert(randomWithProbability()); */
 
         function getRandom(){
             var num=Math.random();
@@ -357,14 +367,15 @@ quiz.forEach(q => q.choices.scramble());
     </script>
     <style type="text/css" media="all">
 		/* QUIZ STYLES */
-		#frame 													{ width:auto; max-width: 800px; background:transparent; margin:3px auto; padding:10px; color:#333 !important; }
+		#frame 													{ width:auto; background:transparent; margin:auto auto; padding:2.5%; color:#333 !important; }
 		div#frame h2 											{ width:auto; border-bottom:1px solid #bdbdbd; padding:0 0 5px 0; font-size:30px; text-align:center;}
 		h3.question 											{ font-weight:normal; margin:20px 0; margin-top: 0px; padding:0; font-style:italic; display:block; }
 		p.pager 												{ margin:5px 0 5px; color:#999; text-align:right; }
 		.qnumber 												{ font-size:25px; font-weight:bold; font-style:italic; vertical-align:bottom; }
 		.number 												{ font-size:25px; font-weight:bold; font-style:normal; vertical-align:inherit; padding-right:10px; }
 		.score 													{ width:100%; display:inline-block; margin:30px 0; font-size:100px; text-align:center; }
-		#choice-block 											{display:block; list-style:none; margin:0; padding:0; cursor: pointer; }
+		#outcome                                                { width:100%; display:none; margin:30px 0; font-size:100px; text-align:center; }
+        #choice-block 											{display:block; list-style:none; margin:0; padding:0; cursor: pointer; }
 		#explanation 											{ width:auto; min-height:100px; margin:0 auto; padding:20px 0; text-align:center; }
 		#explanation span 										{ font-weight:bold; padding-right:8px; }
 		.choice-box 											{ width:100%;  display:block;  text-align:center;  margin:5px auto !important; padding:10px 0 !important; border:1px solid #bdbdbd; }
@@ -379,7 +390,7 @@ quiz.forEach(q => q.choices.scramble());
     <div class="row">
     <div class="col-2">
                 <div id="barr" class="progress progress-bar-vertical" style="width: 30px; height: 87%;  min-height: 100px; display: flex; align-items: flex-end; margin-left: 55%; margin-top: 50px; float: left;">
-                  <div id="progress_bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="height: 100%;  width: 100%; background-color: #7CFC00; -webkit-transition: height 0.6s ease; -o-transition: height 0.6s ease; transition: height 0.6s ease; ">
+                  <div id="progress_bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="height: 100%;  width: 100%; background-color: #7CFC00; -webkit-transition: height 0.6s ease;">
                   </div>
                 </div>
                 </div>
