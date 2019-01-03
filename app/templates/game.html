@@ -114,7 +114,7 @@ quiz.forEach(q => q.choices.scramble());
 				    $('.choice').eq(choice).addClass('btn-success').css({'font-weight':'bold', 'border-color':'#51a351', 'color':'green'});
                     if(i > 10){ i = 10;}
                     score = score + i;
-                    // send the score to the table score is
+                    // send the score to the table score
                     if ("{{ opponent }}" != "AI"){ 
                         console.log("UPDATING SCORE");
                         $.ajax({
@@ -262,7 +262,6 @@ quiz.forEach(q => q.choices.scramble());
         
 
         function animate_progress_bar()  {
-//$('#progress_bar').css("background-color", "#7CFC00");
             if(start == 1){
                 var counterBack = setInterval(function () {
                     $('#progress_bar').css("background-color", "#7CFC00");
