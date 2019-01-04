@@ -63,6 +63,9 @@ def index() -> str:
             if request.form['new_username'] == "AI":
                 return "User Already Exists"
 
+            if not request.form['new_username'].isalnum() or request.form['new_username'] == "":
+                return "Invalid Input Format"
+
             user_found = users.find_one({"name": request.form["new_username"]})
 
             if user_found is None: 

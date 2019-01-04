@@ -45,6 +45,9 @@
           <div id="user_exists_alert" class="alert alert-danger" role="alert" hidden>
               This username has already been taken - try another!
           </div>
+          <div id="invalid_user_alert" class="alert alert-danger" role="alert" hidden>
+              Username must be alphanumeric characters only, and not be empty. 
+          </div>
           <div id="user_not_exist_alert" class="alert alert-danger" role="alert" hidden>
             This username does not exist - create it!
           </div>
@@ -79,6 +82,7 @@
       document.getElementById("user_created_alert").hidden = true;
       document.getElementById("user_exists_alert").hidden = true;
       document.getElementById("user_not_exist_alert").hidden = true;
+      document.getElementById("invalid_user_alert").hidden = true;
     });
     
 
@@ -105,6 +109,7 @@
         // hide both alerts
         document.getElementById("user_created_alert").hidden = true;
         document.getElementById("user_exists_alert").hidden = true;
+        document.getElementById("invalid_user_alert").hidden = true;
       }
 
     }
@@ -191,10 +196,17 @@
           if (response == "User Already Exists")  {
             document.getElementById("user_exists_alert").hidden = false;
             document.getElementById("user_created_alert").hidden = true;
+            document.getElementById("invalid_user_alert").hidden = true;
           }
           else if (response == "User Created Successfully")  {
             document.getElementById("user_created_alert").hidden = false;
             document.getElementById("user_exists_alert").hidden = true;
+            document.getElementById("invalid_user_alert").hidden = true;
+          }
+          else if (response == "Invalid Input Format")  {
+            document.getElementById("user_exists_alert").hidden = true;
+            document.getElementById("user_created_alert").hidden = true;
+            document.getElementById("invalid_user_alert").hidden = false;
           }
           else  {
             console.log("GENERAL ERROR")
