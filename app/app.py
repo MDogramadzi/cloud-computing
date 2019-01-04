@@ -14,7 +14,7 @@ from bson import ObjectId
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = '45259547-5106-4f31-84b4-fa33ac37c73e'
 
-app.config["MONGO_URI"] = "mongodb://mongo:27017/reach-engine"
+app.config["MONGO_URI"] = "mongodb://mongodb:27017/reach-engine"
 mongo = PyMongo(app)
 
 
@@ -150,17 +150,17 @@ def game_ai():
 def game():
     # player 2 created the game
     if request.method == "POST":
-
+        min_time = datetime.datetime.now() - datetime.timedelta(minutes=1)
         if 'username' in request.form:
             if session['created'] is False:  # player 1
 
-                game = games.find_one({"player_1": request.form['username'], "player_2": request.form['opponent']})
+                game = games.find_one({"player_1": request.form['username'], "player_2": request.form['opponent'], "created": {"$gte": min_time}})
                 opp_score = game["score_2"]
                 return str(opp_score)
 
             else:  # player 2
 
-                game = games.find_one({"player_1": request.form['opponent'], "player_2": request.form['username']})
+                game = games.find_one({"player_1": request.form['opponent'], "player_2": request.form['username'], "created": {"$gte": min_time}})
                 opp_score = game["score_1"]
                 return str(opp_score)
 
@@ -168,13 +168,13 @@ def game():
 
             if session['created'] is False:  # player 1
 
-                query = { "player_1": request.form["username_updt"], "player_2": request.form["opponent_updt"] }
+                query = { "player_1": request.form["username_updt"], "player_2": request.form["opponent_updt"], "created": {"$gte": min_time} }
                 newvalues = { "$set": { "score_1": request.form["score"] } }
                 games.update_one(query, newvalues)
 
             else:  # player 2
 
-                query = { "player_1": request.form["opponent_updt"], "player_2": request.form["username_updt"] }
+                query = { "player_1": request.form["opponent_updt"], "player_2": request.form["username_updt"], "created": {"$gte": min_time} }
                 newvalues = { "$set": { "score_2": request.form["score"] } }
                 games.update_one(query, newvalues)
 
