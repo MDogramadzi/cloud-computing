@@ -158,15 +158,15 @@ quiz.forEach(q => q.choices.scramble());
                         console.log("picked is end " + choice);
                     }
                     if (i == 0){
-                    timeAI = Math.floor(Math.random() * 11);
-                    correctAI = getRandom();
-                    answerAI = timeAI * correctAI;
-                    scoreAI = scoreAI + answerAI;
-                    console.log("Time AI: " + timeAI);
-                    console.log("Random Correct: " + correctAI);
-                    console.log("AI Score is : " + scoreAI);
-                    quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
-                    document.getElementById("scoreboard").innerHTML = quiztitle;
+                    //timeAI = Math.floor(Math.random() * 11);
+                    //correctAI = getRandom();
+                    //answerAI = timeAI * correctAI;
+                    //scoreAI = scoreAI + answerAI;
+                    //console.log("Time AI: " + timeAI);
+                    //console.log("Random Correct: " + correctAI);
+                    //console.log("AI Score is : " + scoreAI);
+                    //quiztitle = "{{ username }} : " + score + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + scoreAI + " : {{ opponent }}";
+                    //document.getElementById("scoreboard").innerHTML = quiztitle;
 					endQuiz();}
 			} else if (currentquestion < quiz.length){
                 if(i == 0){
