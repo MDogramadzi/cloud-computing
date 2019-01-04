@@ -129,7 +129,7 @@ def find_opponent(player_name):
 
 
 def check_game_created(player_name):
-    min_time = datetime.datetime.now() - datetime.timedelta(minutes=1)
+    min_time = datetime.datetime.now() - datetime.timedelta(seconds=80)
     game = games.find_one({"player_1": player_name, "created": {"$gte": min_time}})
 
     if game is not None:
@@ -153,7 +153,7 @@ def game_ai():
 def game():
     # player 2 created the game
     if request.method == "POST":
-        min_time = datetime.datetime.now() - datetime.timedelta(minutes=1)
+        min_time = datetime.datetime.now() - datetime.timedelta(seconds=80)
         if 'username' in request.form:
             if session['created'] is False:  # player 1
 
