@@ -104,7 +104,7 @@ def find_opponent(player_name):
     
     # check matchmaking table and find if anyone is searching, within reasonable time
     min_time = datetime.datetime.now() - datetime.timedelta(seconds=10)
-    opp = matchmaking.find_one({"username": {"$ne": player_name}, "created": {"$gte": min_time}})
+    opp = matchmaking.find_one_and_delete({"username": {"$ne": player_name}, "created": {"$gte": min_time}})
     present = matchmaking.find_one({"username": player_name})
 
     if opp is None and present is None:  # no opponents and not currently in matchmaking
@@ -116,7 +116,6 @@ def find_opponent(player_name):
         return "Already in Matchmaking Table Alone"
 
     else:
-        matchmaking.remove({"$or": [{"username": player_name}, {"username": opp["username"]}]})
         mix_id = random.randint(0,1)
         session['mix_id'] = mix_id
         session['opponent'] = opp["username"]
