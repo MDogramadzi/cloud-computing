@@ -104,13 +104,12 @@ def find_opponent(player_name):
     
     # check matchmaking table and find if anyone is searching, within reasonable time
     min_time = datetime.datetime.now() - datetime.timedelta(seconds=10)
-    opp = matchmaking.find_one({"username": {"$ne": player_name}, "searching": True, "created": {"$gte": min_time}})
+    opp = matchmaking.find_one({"username": {"$ne": player_name}, "created": {"$gte": min_time}})
     present = matchmaking.find_one({"username": player_name})
 
     if opp is None and present is None:  # no opponents and not currently in matchmaking
         matchmaking.insert_one({"username": player_name,
-                            "searching": True,
-                            "created": datetime.datetime.now()})
+                                "created": datetime.datetime.now()})
         return "Added to matchmaking table"
     
     elif opp is None and present is not None:  # no opponents + in matchmaking already
