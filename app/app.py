@@ -140,7 +140,7 @@ def check_game_created(player_name):
 
 
 # load-testing
-@app.route('/game-ai-test', methods = ['POST'])
+@app.route('/metrics', methods = ['POST'])
 def game_ai_test():
 
     quiz = get_questions_for_quiz()
