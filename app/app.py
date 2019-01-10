@@ -139,6 +139,14 @@ def check_game_created(player_name):
         return False
 
 
+# load-testing
+@app.route('/game-ai-test', methods = ['POST'])
+def game_ai_test():
+
+    quiz = get_questions_for_quiz()
+    return render_template('game.html', username="Guest", opponent="AI", quiz=quiz)
+
+
 @app.route('/game-ai')
 def game_ai():
 
