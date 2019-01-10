@@ -143,7 +143,6 @@ def check_game_created(player_name):
 @app.route('/metrics', methods = ['POST'])
 def metrics():
 
-    print("Running Metrics")
     quiz = get_questions_for_quiz()
     return render_template('game.html', username="Guest", opponent="AI", quiz=quiz)
 
