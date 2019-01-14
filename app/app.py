@@ -14,7 +14,7 @@ from bson import ObjectId
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = '45259547-5106-4f31-84b4-fa33ac37c73e'
 
-app.config["MONGO_URI"] = "mongodb://mongod-0.mongodb-service,mongod-1.mongodb-service,mongod-2.mongodb-service:27017/reach-engine"
+app.config["MONGO_URI"] = "mongodb://main_admin:1@mongod-0.mongodb-service,mongod-1.mongodb-service,mongod-2.mongodb-service:27017/reach-engine"
 mongo = PyMongo(app)
 
 
