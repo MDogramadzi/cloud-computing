@@ -39,7 +39,7 @@
             "Malicious Insiders", "Insecure Interfaces and APIs"]
     },
     {
-        "title": "Which of these IaC tools NOT open-source?",
+        "title": "Which of these IaC tools is NOT open-source?",
         "choices": ["Cloud-Formation", "Chef", "Ansible", "SaltStack"]
     }
 ]
